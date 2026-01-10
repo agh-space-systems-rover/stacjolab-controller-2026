@@ -1,3 +1,4 @@
-idf_component_register(SRCS "hello_world_main.c"
-                       PRIV_REQUIRES spi_flash
-                       INCLUDE_DIRS "")
+file(GLOB_RECURSE SRC_FILES "src/*.c")
+idf_component_register(SRCS "main.c" ${SRC_FILES}
+                    PRIV_REQUIRES esp_wifi nvs_flash
+                    INCLUDE_DIRS "include")
