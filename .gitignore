@@ -81,5 +81,4 @@ Desktop.ini
 # Other
 .devcontainer/
 .cache
-
-# Specifically leaving out .vscode/ to allow for idf-related workspace settings to be shared
+.vscode/
