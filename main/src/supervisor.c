@@ -7,9 +7,15 @@
 
 static const char *TAG = "supervisor";
 
+static void supervisor_status_report();
+
 void supervisor_task(void *arg) {
     while (1) {
-        ESP_LOGI(TAG, "Supervisor task running");
+        supervisor_status_report();
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
+}
+
+void supervisor_status_report() {
+    ESP_LOGI(TAG, "Supervisor status report");
 }
