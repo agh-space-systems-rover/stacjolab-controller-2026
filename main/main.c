@@ -11,6 +11,7 @@
 #include "supervisor.h"
 #include "esp_now_driver.h"
 #include "tlv.h"
+#include "pwm_driver.h"
 
 
 static const char *TAG = "main";
