@@ -1,4 +1,6 @@
 #include "msg_handlers.h"
+#include "h_bridge.h"
+
 #include "freertos/idf_additions.h"
 
 
@@ -10,4 +12,18 @@ void on_ping(const msg_t *msg, void *user_ctx) {
     // Prepare pong response (no payload)
 
     xQueueSend(q_esp_now_tx, &response, pdMS_TO_TICKS(100));
+}
+
+void on_h_bridge_set_speed(const msg_t *msg, void *user_ctx) {
+    if(msg->length != sizeof(h_bridge_msg_t)) {
+        // Invalid message length
+        return;
+    }
+
+    h_bridge_msg_t *h_bridge_msg = (h_bridge_msg_t *)msg->payload;
+
+    h_bridge_t* h_bridge = get_h_bridge_by_id(h_bridge_msg->h_bridge_id);
+    if(h_bridge != NULL) {
+        h_bridge_set_speed(h_bridge, h_bridge_msg->speed);
+    }
 }

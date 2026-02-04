@@ -12,7 +12,7 @@
 #include "esp_now_driver.h"
 #include "tlv.h"
 #include "pwm_driver.h"
-
+#include "stacjolab.h"
 
 static const char *TAG = "main";
 
@@ -24,16 +24,17 @@ esp_err_t init();
 esp_err_t create_tasks();
 esp_err_t create_queues();
 
+stacjolab_controller_t stacjolab_controller;
 
 void app_main(void) {
     ESP_LOGI(TAG, "Initializing stacjolab controller");
 
 
-    // Initialize stacjolab driver
     ESP_ERROR_CHECK(init());
     ESP_ERROR_CHECK(create_queues());
     ESP_ERROR_CHECK(create_tasks());
-
+    ESP_ERROR_CHECK(stacjolab_controller_init(&stacjolab_controller));
+    
     while(1) {
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
