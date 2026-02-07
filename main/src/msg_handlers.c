@@ -1,5 +1,5 @@
 #include "msg_handlers.h"
-#include "h_bridge.h"
+#include "stacjolab.h"
 
 #include "freertos/idf_additions.h"
 
@@ -26,4 +26,15 @@ void on_h_bridge_set_speed(const msg_t *msg, void *user_ctx) {
     if(h_bridge != NULL) {
         h_bridge_set_speed(h_bridge, h_bridge_msg->speed);
     }
+}
+
+void on_cc_driver_set_duty(const msg_t *msg, void *user_ctx) {
+    if(msg->length != sizeof(cc_driver_msg_t)) {
+        // Invalid message length
+        return;
+    }
+
+    cc_driver_msg_t *cc_msg = (cc_driver_msg_t *)msg->payload;
+
+    cc_driver_duty(&stacjolab_controller.cc_driver, cc_msg->duty);
 }

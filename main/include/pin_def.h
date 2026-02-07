@@ -6,7 +6,7 @@
 
 // Debug LED
 #define LED1_PIN                GPIO_NUM_21
-#define LED2_PIN                GPIO_NUM_45
+#define LED2_PIN                45
 
 // Auxiliary header pins
 #define AUX_1_PIN               GPIO_NUM_1
@@ -17,7 +17,7 @@
 #define AUX_6_PIN               GPIO_NUM_13
 
 // WS2812 LED strip
-#define WS2812_PIN              GPIO_NUM_46
+#define WS2812_PIN              46
 
 // Tenso amp
 #define TENSO_SCL_PIN           GPIO_NUM_9
@@ -27,9 +27,9 @@
 // Thermocouples
 #define TC_SCK_PIN              GPIO_NUM_38
 #define TC_MISO_PIN             GPIO_NUM_39
-#define TC_nCS1_PIN             GPIO_NUM_40
-#define TC_nCS2_PIN             GPIO_NUM_41
-#define TC_nCS3_PIN             GPIO_NUM_42
+#define TC_nCS1_PIN             40
+#define TC_nCS2_PIN             41
+#define TC_nCS3_PIN             42
 
 // CC driver
 #define CC_PWM_PIN              GPIO_NUM_4

@@ -35,8 +35,21 @@ void app_main(void) {
     ESP_ERROR_CHECK(create_tasks());
     ESP_ERROR_CHECK(stacjolab_controller_init(&stacjolab_controller));
     
+    // Test
+
+    h_bridge_set_speed(&stacjolab_controller.h_bridge_ch_0, 25);
+
+    cc_driver_duty(&stacjolab_controller.cc_driver, 25);
+
+    power_switch_set_duty(&stacjolab_controller.power_switch_ch_0, 25);
+    power_switch_enable(&stacjolab_controller.power_switch_ch_0, 1);
+
+    bool led_state = false;
     while(1) {
         vTaskDelay(pdMS_TO_TICKS(1000));
+        led_state = !led_state;
+        gpio_set_level(LED1_PIN, led_state);
+        gpio_set_level(LED2_PIN, led_state);
     }
 }
 

@@ -18,3 +18,9 @@ typedef struct {
     uint8_t enabled;        // 0 = off, 1 = on
 } heater_msg_t;
 void on_heater(const msg_t *msg, void *user_ctx);
+
+#define CC_DRIVER_MSG_TYPE 0x12
+typedef struct {
+    uint8_t duty;            // Duty cycle from 0 to 100
+} cc_driver_msg_t;
+void on_cc_driver_set_duty(const msg_t *msg, void *user_ctx);

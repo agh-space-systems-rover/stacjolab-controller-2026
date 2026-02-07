@@ -13,6 +13,6 @@ typedef struct {
     pwm_driver_t pwm_driver2;
 } h_bridge_t;
 
-esp_err_t h_bridge_init(h_bridge_t* h_bridge, int8_t h_bridge_id);
-h_bridge_t* get_h_bridge_by_id(int8_t h_bridge_id);
+esp_err_t h_bridge_init(h_bridge_t* h_bridge, uint8_t h_bridge_id);
+h_bridge_t* get_h_bridge_by_id(uint8_t h_bridge_id);
 esp_err_t h_bridge_set_speed(h_bridge_t* h_bridge, int8_t speed);
