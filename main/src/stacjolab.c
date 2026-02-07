@@ -30,6 +30,8 @@ esp_err_t stacjolab_controller_init(stacjolab_controller_t* controller) {
     ESP_ERROR_CHECK(power_switch_init(&controller->power_switch_ch_1, POWER_SWITCH_1_ID));
     ESP_ERROR_CHECK(power_switch_init(&controller->power_switch_ch_2, POWER_SWITCH_2_ID));
 
+    ESP_ERROR_CHECK(thermocouple_manager_init(&controller->thermocouple_manager));
+
     ESP_LOGI("stacjolab", "Controller initialized");
 
     return ESP_OK;

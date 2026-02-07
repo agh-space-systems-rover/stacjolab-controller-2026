@@ -7,6 +7,7 @@
 #include "h_bridge.h"
 #include "cc_driver.h"
 #include "power_switch.h"
+#include "thermocouple.h"
 
 #define LEDC_TIMER_0_FREQ 100
 
@@ -21,6 +22,8 @@ typedef struct {
     power_switch_t power_switch_ch_0;
     power_switch_t power_switch_ch_1;
     power_switch_t power_switch_ch_2;
+
+    thermocouple_manager_t thermocouple_manager;
     
 }stacjolab_controller_t;
 

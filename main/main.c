@@ -45,11 +45,19 @@ void app_main(void) {
     power_switch_enable(&stacjolab_controller.power_switch_ch_0, 1);
 
     bool led_state = false;
+    float temperature;
     while(1) {
         vTaskDelay(pdMS_TO_TICKS(1000));
         led_state = !led_state;
         gpio_set_level(LED1_PIN, led_state);
         gpio_set_level(LED2_PIN, led_state);
+
+        thermocouple_read(&stacjolab_controller.thermocouple_manager.thermocouples[0], &temperature);
+        ESP_LOGI(TAG, "Temperature 0: %.2f C", temperature);
+        thermocouple_read(&stacjolab_controller.thermocouple_manager.thermocouples[1], &temperature);
+        ESP_LOGI(TAG, "Temperature 1: %.2f C", temperature);
+        thermocouple_read(&stacjolab_controller.thermocouple_manager.thermocouples[2], &temperature);
+        ESP_LOGI(TAG, "Temperature 2: %.2f C", temperature);
     }
 }
 
