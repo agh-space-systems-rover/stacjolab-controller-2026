@@ -14,9 +14,12 @@ typedef struct {
 } thermocouple_flags_t;
 
 typedef struct {
+
     uint8_t id;
     uint8_t register_data[4];
     spi_device_handle_t spi_handle;
+
+    // TODO: low pass
 } thermocouple_t;
 
 typedef struct {

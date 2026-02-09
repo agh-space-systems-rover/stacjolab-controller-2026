@@ -70,23 +70,24 @@ esp_err_t thermocouple_init(thermocouple_t* thermocouple, uint8_t id) {
     return ESP_OK;
 }
 
+static void reverse_bytes(uint8_t* data, size_t length) {
+    for (size_t i = 0; i < length / 2; i++) {
+        uint8_t temp = data[i];
+        data[i] = data[length - 1 - i];
+        data[length - 1 - i] = temp;
+    }
+}
+
 static float convert_thermocouple_temperature(thermocouple_t* thermocouple) {
-    int32_t thermocouple_temp = (int32_t)thermocouple->register_data >> TC_TEMP_OFFSET;
+    int32_t thermocouple_temp = *(int32_t*)thermocouple->register_data >> TC_TEMP_OFFSET;
+    ESP_LOGI(TAG, "TC casted: %d", *(int32_t*)thermocouple->register_data);
+    ESP_LOGI(TAG, "Thermocouple raw temperature: %d", thermocouple_temp);
     return (float)thermocouple_temp * 0.25f;
 }
 
 static float convert_internal_temperature(thermocouple_t* thermocouple) {
     int16_t internal_temp = ((int16_t)thermocouple->register_data & TC_INTERNAL_TEMP_MASK) >> TC_INTERNAL_TEMP_OFFSET;
     return (float)internal_temp * 0.0625f;
-}
-
-static thermocouple_flags_t get_thermocouple_flags(thermocouple_t* thermocouple) {
-    thermocouple_flags_t flags;
-    flags.OC = ((uint32_t)thermocouple->register_data >> TC_OC_BIT) & 0x01;
-    flags.SCG = ((uint32_t)thermocouple->register_data >> TC_SCG_BIT) & 0x01;
-    flags.SCV = ((uint32_t)thermocouple->register_data >> TC_SCV_BIT) & 0x01;
-    flags.fault = ((uint32_t)thermocouple->register_data >> TC_FAULT_BIT) & 0x03;
-    return flags;
 }
 
 esp_err_t thermocouple_read(thermocouple_t* thermocouple, float* temperature) {
@@ -103,20 +104,27 @@ esp_err_t thermocouple_read(thermocouple_t* thermocouple, float* temperature) {
         return ret;
     }
 
-    ESP_LOGI(TAG, "Read data from SPI device: %08x",
-             thermocouple->register_data);   
+    reverse_bytes(thermocouple->register_data, 4);
+
+    ESP_LOGI(TAG, "Read data from SPI device: D3=%02X D2=%02X D1=%02X D0=%02X",
+             thermocouple->register_data[3], thermocouple->register_data[2],
+             thermocouple->register_data[1], thermocouple->register_data[0]);   
 
     *temperature = convert_thermocouple_temperature(thermocouple);
 
     float internal_temperature = convert_internal_temperature(thermocouple);
 
+    ESP_LOGI(TAG, "Thermocouple temperature: %.2f C", convert_thermocouple_temperature(thermocouple));
     ESP_LOGI(TAG, "Internal temperature: %.2f", internal_temperature);
 
-    thermocouple_flags_t flags = get_thermocouple_flags(thermocouple);
-    if(flags.fault) {
-        ESP_LOGW(TAG, "Thermocouple fault detected: OC=%d, SCG=%d, SCV=%d",
-                 flags.OC, flags.SCG, flags.SCV);
+    if (thermocouple->register_data[2] & 0x1) {
+        uint8_t oc = (*thermocouple->register_data >> TC_OC_BIT) & 0x1;
+        uint8_t scg = (*thermocouple->register_data >> TC_SCG_BIT) & 0x1;
+        uint8_t scv = (*thermocouple->register_data >> TC_SCV_BIT) & 0x1;
+
+        ESP_LOGW(TAG, "Thermocouple fault detected: OC=%d, SCG=%d, SCV=%d", oc, scg, scv);
     }
+
 
     return ESP_OK;
 }

@@ -37,11 +37,11 @@ void app_main(void) {
     
     // Test
 
-    h_bridge_set_speed(&stacjolab_controller.h_bridge_ch_0, 25);
+    h_bridge_set_speed(&stacjolab_controller.h_bridge_ch_0, 100);
 
-    cc_driver_duty(&stacjolab_controller.cc_driver, 25);
+    cc_driver_duty(&stacjolab_controller.cc_driver, 100);
 
-    power_switch_set_duty(&stacjolab_controller.power_switch_ch_0, 25);
+    power_switch_set_duty(&stacjolab_controller.power_switch_ch_0, 100);
     power_switch_enable(&stacjolab_controller.power_switch_ch_0, 1);
 
     bool led_state = false;
@@ -54,10 +54,10 @@ void app_main(void) {
 
         thermocouple_read(&stacjolab_controller.thermocouple_manager.thermocouples[0], &temperature);
         ESP_LOGI(TAG, "Temperature 0: %.2f C", temperature);
-        thermocouple_read(&stacjolab_controller.thermocouple_manager.thermocouples[1], &temperature);
-        ESP_LOGI(TAG, "Temperature 1: %.2f C", temperature);
-        thermocouple_read(&stacjolab_controller.thermocouple_manager.thermocouples[2], &temperature);
-        ESP_LOGI(TAG, "Temperature 2: %.2f C", temperature);
+        // thermocouple_read(&stacjolab_controller.thermocouple_manager.thermocouples[1], &temperature);
+        // ESP_LOGI(TAG, "Temperature 1: %.2f C", temperature);
+        // thermocouple_read(&stacjolab_controller.thermocouple_manager.thermocouples[2], &temperature);
+        // ESP_LOGI(TAG, "Temperature 2: %.2f C", temperature);
     }
 }
 
