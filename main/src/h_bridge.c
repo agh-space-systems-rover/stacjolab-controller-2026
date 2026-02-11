@@ -2,6 +2,8 @@
 #include "h_bridge.h"
 #include "pin_def.h"
 
+static const char* TAG = "h_bridge";
+
 static ledc_channel_t h_bridge_pwm1_channels[] = {LEDC_CHANNEL_0, LEDC_CHANNEL_1};
 static ledc_channel_t h_bridge_pwm2_channels[] = {LEDC_CHANNEL_2, LEDC_CHANNEL_3};
 static gpio_num_t h_bridge_pwm1_pins[] = {H_BRIDGE_0_PWM1_PIN, H_BRIDGE_1_PWM1_PIN};

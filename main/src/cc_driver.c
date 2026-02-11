@@ -2,6 +2,8 @@
 #include "stacjolab.h"
 #include "pin_def.h"
 
+static const char* TAG = "cc_driver";
+
 esp_err_t cc_driver_init(cc_driver_t *cc_driver) {
     
     cc_driver->pwm_driver.speed_mode = LEDC_LOW_SPEED_MODE;

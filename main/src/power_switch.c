@@ -3,6 +3,8 @@
 #include "pin_def.h"
 #include "stacjolab.h"
 
+static const char* TAG = "power_switch";
+
 static ledc_channel_t power_switch_pwm_channels[] = {LEDC_CHANNEL_5, LEDC_CHANNEL_6, LEDC_CHANNEL_7};
 static gpio_num_t power_switch_pwm_pins[] = {PS_PWM_1_PIN, PS_PWM_2_PIN, PS_PWM_3_PIN};
 

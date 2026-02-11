@@ -45,19 +45,12 @@ void app_main(void) {
     power_switch_enable(&stacjolab_controller.power_switch_ch_0, 1);
 
     bool led_state = false;
-    float temperature;
     while(1) {
         vTaskDelay(pdMS_TO_TICKS(1000));
         led_state = !led_state;
         gpio_set_level(LED1_PIN, led_state);
         gpio_set_level(LED2_PIN, led_state);
 
-        thermocouple_read(&stacjolab_controller.thermocouple_manager.thermocouples[0], &temperature);
-        ESP_LOGI(TAG, "Temperature 0: %.2f C", temperature);
-        // thermocouple_read(&stacjolab_controller.thermocouple_manager.thermocouples[1], &temperature);
-        // ESP_LOGI(TAG, "Temperature 1: %.2f C", temperature);
-        // thermocouple_read(&stacjolab_controller.thermocouple_manager.thermocouples[2], &temperature);
-        // ESP_LOGI(TAG, "Temperature 2: %.2f C", temperature);
     }
 }
 
@@ -105,6 +98,7 @@ esp_err_t create_tasks() {
     //TODO: set proper stack size and priority
     xTaskCreate(supervisor_task, "supervisor_task", 4096, NULL, 5, NULL);
     xTaskCreate(esp_now_task, "esp_now_task", 4096, NULL, 5, NULL);
+    xTaskCreate(temp_control_task, "temp_control_task", 4096, NULL, 5, NULL);
 
     return ESP_OK;
 }
