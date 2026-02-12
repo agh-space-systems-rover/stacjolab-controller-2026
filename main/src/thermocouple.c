@@ -201,7 +201,6 @@ float get_temperature_by_id(uint8_t id) {
     thermocouple_t* tc = get_thermocouple_by_id(id);
     if (tc == NULL) {
         ESP_LOGW(TAG, "Invalid thermocouple ID: %d", id);
-        return FAULT_READING; // Return fault reading for invalid ID
     }
     return get_filtered_temperature(tc);
 }

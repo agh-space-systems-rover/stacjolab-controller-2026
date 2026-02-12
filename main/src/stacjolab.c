@@ -50,18 +50,22 @@ esp_err_t stacjolab_controller_init(stacjolab_controller_t* controller) {
 void temp_control_task(void *arg) {
 
     while (1) {
-        ESP_ERROR_CHECK(thermocouple_read_all(&stacjolab_controller.thermocouple_manager));
+
+        gpio_set_level(LED2_PIN, stacjolab_controller.power_switch_ch_0.enabled);
+        gpio_set_level(LED1_PIN, stacjolab_controller.temp_control_config.heating_enabled);
+
+        thermocouple_read_all(&stacjolab_controller.thermocouple_manager);
 
         ESP_LOGI(TAG, "TC0: %.2f C, fault: %d", get_temperature_by_id(TC_0_ID), get_thermocouple_fault_by_id(TC_0_ID));
-        // ESP_LOGI(TAG, "TC1: %.2f C, fault: %d", get_temperature_by_id(TC_1_ID), get_thermocouple_fault_by_id(TC_1_ID));
-        // ESP_LOGI(TAG, "TC2: %.2f C, fault: %d", get_temperature_by_id(TC_2_ID), get_thermocouple_fault_by_id(TC_2_ID));
+        ESP_LOGI(TAG, "TC1: %.2f C, fault: %d", get_temperature_by_id(TC_1_ID), get_thermocouple_fault_by_id(TC_1_ID));
+        ESP_LOGI(TAG, "TC2: %.2f C, fault: %d", get_temperature_by_id(TC_2_ID), get_thermocouple_fault_by_id(TC_2_ID));
 
-        // if(get_thermocouple_fault_by_id(TC_HEATER) || get_thermocouple_fault_by_id(TC_INSIDE_OVEN)) {
-        //     // ESP_LOGW(TAG, "Fault detected in one of the critical thermocouples. Disabling heating.");
-        //     power_switch_t* power_switch_heater = get_power_switch_by_id(POWER_SWITCH_HEATER);
-        //     power_switch_enable(power_switch_heater, 0);
-        //     continue; // Skip the rest of the control logic if there's a fault
-        // }
+        if(get_thermocouple_fault_by_id(TC_HEATER) || get_thermocouple_fault_by_id(TC_INSIDE_OVEN)) {
+            // ESP_LOGW(TAG, "Fault detected in one of the critical thermocouples. Disabling heating.");
+            power_switch_t* power_switch_heater = get_power_switch_by_id(POWER_SWITCH_HEATER);
+            power_switch_enable(power_switch_heater, 0);
+            continue; // Skip the rest of the control logic if there's a fault
+        }
 
         if (stacjolab_controller.temp_control_config.heating_enabled) {
             float current_heater_temp = get_temperature_by_id(TC_HEATER);

@@ -46,8 +46,6 @@ void app_main(void) {
 
     while(1) {
         vTaskDelay(pdMS_TO_TICKS(1000));
-        gpio_set_level(LED2_PIN, stacjolab_controller.power_switch_ch_0.enabled);
-        gpio_set_level(LED1_PIN, stacjolab_controller.temp_control_config.heating_enabled);
 
     }
 }

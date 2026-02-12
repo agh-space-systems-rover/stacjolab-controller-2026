@@ -14,6 +14,55 @@ void on_ping(const msg_t *msg, void *user_ctx) {
     xQueueSend(q_esp_now_tx, &response, pdMS_TO_TICKS(100));
 }
 
+void on_heater_enable(const msg_t *msg, void *user_ctx) {
+    if(msg->length != sizeof(heater_msg_t)) {
+        // Invalid message length
+        return;
+    }
+
+    heater_msg_t *heater_msg = (heater_msg_t *)msg->payload;
+
+    stacjolab_controller.temp_control_config.heating_enabled = heater_msg->enabled;
+}
+
+void on_heater_config(const msg_t *msg, void *user_ctx) {
+    if(msg->length != sizeof(heater_config_msg_t)) {
+        // Invalid message length
+        return;
+    }
+
+    heater_config_msg_t *config_msg = (heater_config_msg_t *)msg->payload;
+
+    stacjolab_controller.temp_control_config.high_temp_threshold = config_msg->high_temp_threshold;
+    stacjolab_controller.temp_control_config.low_temp_threshold = config_msg->low_temp_threshold;
+    stacjolab_controller.temp_control_config.heater_duty_cycle = config_msg->heater_duty_cycle;
+}
+
+void on_get_tc_temp(const msg_t *msg, void *user_ctx) {
+    if(msg->length != sizeof(get_tc_temp_msg_t)) {
+        // Invalid message length
+        return;
+    }
+
+    get_tc_temp_msg_t *get_temp_msg = (get_tc_temp_msg_t *)msg->payload;
+
+    uint8_t tc_id = get_temp_msg->tc_id;
+    float temp = get_temperature_by_id(tc_id);
+    bool fault = get_thermocouple_fault_by_id(tc_id);
+
+    resp_tc_temp_msg_t resp_msg;
+    resp_msg.tc_id = tc_id;
+    resp_msg.temp = (int16_t)(temp * 100); // Convert to fixed-point representation
+    resp_msg.fault = fault ? 1 : 0;
+
+    msg_t response;
+    response.type = RESP_TC_TEMP_MSG_TYPE;
+    response.length = sizeof(resp_tc_temp_msg_t);
+    memcpy(response.payload, &resp_msg, sizeof(resp_tc_temp_msg_t));
+
+    xQueueSend(q_esp_now_tx, &response, pdMS_TO_TICKS(100));
+}
+
 void on_h_bridge_set_speed(const msg_t *msg, void *user_ctx) {
     if(msg->length != sizeof(h_bridge_msg_t)) {
         // Invalid message length
