@@ -31,9 +31,9 @@ void app_main(void) {
 
 
     ESP_ERROR_CHECK(init());
+    ESP_ERROR_CHECK(stacjolab_controller_init(&stacjolab_controller));
     ESP_ERROR_CHECK(create_queues());
     ESP_ERROR_CHECK(create_tasks());
-    ESP_ERROR_CHECK(stacjolab_controller_init(&stacjolab_controller));
     
     // Test
 
@@ -44,12 +44,10 @@ void app_main(void) {
     power_switch_set_duty(&stacjolab_controller.power_switch_ch_0, 100);
     power_switch_enable(&stacjolab_controller.power_switch_ch_0, 1);
 
-    bool led_state = false;
     while(1) {
         vTaskDelay(pdMS_TO_TICKS(1000));
-        led_state = !led_state;
-        gpio_set_level(LED1_PIN, led_state);
-        gpio_set_level(LED2_PIN, led_state);
+        gpio_set_level(LED2_PIN, stacjolab_controller.power_switch_ch_0.enabled);
+        gpio_set_level(LED1_PIN, stacjolab_controller.temp_control_config.heating_enabled);
 
     }
 }

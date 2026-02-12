@@ -136,9 +136,9 @@ esp_err_t thermocouple_read(thermocouple_t* thermocouple) {
 
     reverse_bytes(thermocouple->register_data, 4);
 
-    ESP_LOGI(TAG, "Read data from SPI device: D3=%02X D2=%02X D1=%02X D0=%02X",
-             thermocouple->register_data[3], thermocouple->register_data[2],
-             thermocouple->register_data[1], thermocouple->register_data[0]);   
+    // ESP_LOGI(TAG, "Read data from SPI device: D3=%02X D2=%02X D1=%02X D0=%02X",
+    //          thermocouple->register_data[3], thermocouple->register_data[2],
+    //          thermocouple->register_data[1], thermocouple->register_data[0]);   
 
     if (thermocouple->register_data[2] & 0x1) {
         thermocouple->flags.OC = (*thermocouple->register_data >> TC_OC_BIT) & 0x1;
@@ -152,8 +152,8 @@ esp_err_t thermocouple_read(thermocouple_t* thermocouple) {
     }
     else {
 
-        ESP_LOGI(TAG, "Thermocouple temperature: %.2f C", convert_thermocouple_temperature(thermocouple));
-        ESP_LOGI(TAG, "Internal temperature: %.2f", convert_internal_temperature(thermocouple));
+        // ESP_LOGI(TAG, "Thermocouple temperature: %.2f C", convert_thermocouple_temperature(thermocouple));
+        // ESP_LOGI(TAG, "Internal temperature: %.2f", convert_internal_temperature(thermocouple));
 
         thermocouple->filter_newest_reading = (thermocouple->filter_newest_reading + 1) % TC_FILTER_SIZE;
         thermocouple->filter_buffer[thermocouple->filter_newest_reading] = convert_thermocouple_temperature(thermocouple);

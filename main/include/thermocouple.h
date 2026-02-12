@@ -8,7 +8,7 @@
 
 #define TC_COUNT 3
 
-#define TC_FILTER_SIZE 8
+#define TC_FILTER_SIZE 16
 
 #define TC_0_ID 0x0
 #define TC_1_ID 0x1
