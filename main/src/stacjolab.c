@@ -56,12 +56,12 @@ void temp_control_task(void *arg) {
 
         thermocouple_read_all(&stacjolab_controller.thermocouple_manager);
 
-        ESP_LOGI(TAG, "TC0: %.2f C, fault: %d", get_temperature_by_id(TC_0_ID), get_thermocouple_fault_by_id(TC_0_ID));
-        ESP_LOGI(TAG, "TC1: %.2f C, fault: %d", get_temperature_by_id(TC_1_ID), get_thermocouple_fault_by_id(TC_1_ID));
-        ESP_LOGI(TAG, "TC2: %.2f C, fault: %d", get_temperature_by_id(TC_2_ID), get_thermocouple_fault_by_id(TC_2_ID));
+        // ESP_LOGI(TAG, "TC0: %.2f C, fault: %d", get_temperature_by_id(TC_0_ID), get_thermocouple_fault_by_id(TC_0_ID));
+        // ESP_LOGI(TAG, "TC1: %.2f C, fault: %d", get_temperature_by_id(TC_1_ID), get_thermocouple_fault_by_id(TC_1_ID));
+        // ESP_LOGI(TAG, "TC2: %.2f C, fault: %d", get_temperature_by_id(TC_2_ID), get_thermocouple_fault_by_id(TC_2_ID));
 
         if(get_thermocouple_fault_by_id(TC_HEATER) || get_thermocouple_fault_by_id(TC_INSIDE_OVEN)) {
-            // ESP_LOGW(TAG, "Fault detected in one of the critical thermocouples. Disabling heating.");
+            ESP_LOGW(TAG, "Fault detected in one of the critical thermocouples. Disabling heating.");
             power_switch_t* power_switch_heater = get_power_switch_by_id(POWER_SWITCH_HEATER);
             power_switch_enable(power_switch_heater, 0);
             continue; // Skip the rest of the control logic if there's a fault
@@ -77,7 +77,7 @@ void temp_control_task(void *arg) {
                 ESP_LOGI(TAG, "Temperature threshold exceeded. Disabling heater.");
                 power_switch_enable(power_switch_heater, 0);
             }
-            else if (current_heater_temp <= stacjolab_controller.temp_control_config.low_temp_threshold) {
+            else if (current_oven_temp <= stacjolab_controller.temp_control_config.low_temp_threshold) {
                 ESP_LOGI(TAG, "Temperature below threshold. Enabling heater.");
                 power_switch_set_duty(power_switch_heater, stacjolab_controller.temp_control_config.heater_duty_cycle);
                 power_switch_enable(power_switch_heater, 1);

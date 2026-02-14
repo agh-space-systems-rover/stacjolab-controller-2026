@@ -2,6 +2,8 @@
 #include "h_bridge.h"
 #include "pin_def.h"
 
+#include "esp_log.h"
+
 static const char* TAG = "h_bridge";
 
 static ledc_channel_t h_bridge_pwm1_channels[] = {LEDC_CHANNEL_0, LEDC_CHANNEL_1};
@@ -59,14 +61,14 @@ esp_err_t h_bridge_set_speed(h_bridge_t* h_bridge, int8_t speed) {
     esp_err_t err;
     if(speed >= 0) {
         err = pwm_driver_set_duty_percent(&h_bridge->pwm_driver1, (float)speed);
-        if(err != ESP_OK) return err;
+        if(err != ESP_OK) ESP_LOGE(TAG, "Failed to set PWM1 duty: %s", esp_err_to_name(err));
         err = pwm_driver_set_duty_percent(&h_bridge->pwm_driver2, 0.0f);
-        if(err != ESP_OK) return err;
+        if(err != ESP_OK) ESP_LOGE(TAG, "Failed to set PWM2 duty: %s", esp_err_to_name(err));
     } else {
         err = pwm_driver_set_duty_percent(&h_bridge->pwm_driver1, 0.0f);
-        if(err != ESP_OK) return err;
+        if(err != ESP_OK) ESP_LOGE(TAG, "Failed to set PWM1 duty: %s", esp_err_to_name(err));
         err = pwm_driver_set_duty_percent(&h_bridge->pwm_driver2, (float)(-speed));
-        if(err != ESP_OK) return err;
+        if(err != ESP_OK) ESP_LOGE(TAG, "Failed to set PWM2 duty: %s", esp_err_to_name(err));
     }
 
     return err;

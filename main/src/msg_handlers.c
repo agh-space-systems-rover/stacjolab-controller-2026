@@ -2,6 +2,7 @@
 #include "stacjolab.h"
 
 #include "freertos/idf_additions.h"
+#include <string.h>
 
 
 void on_ping(const msg_t *msg, void *user_ctx) {

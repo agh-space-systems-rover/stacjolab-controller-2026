@@ -37,12 +37,10 @@ void app_main(void) {
     
     // Test
 
-    h_bridge_set_speed(&stacjolab_controller.h_bridge_ch_0, 100);
+    h_bridge_set_speed(&stacjolab_controller.h_bridge_ch_0, 50);
+    h_bridge_set_speed(&stacjolab_controller.h_bridge_ch_1, 50);
 
-    cc_driver_duty(&stacjolab_controller.cc_driver, 100);
-
-    power_switch_set_duty(&stacjolab_controller.power_switch_ch_0, 100);
-    power_switch_enable(&stacjolab_controller.power_switch_ch_0, 1);
+    cc_driver_duty(&stacjolab_controller.cc_driver, 50);
 
     while(1) {
         vTaskDelay(pdMS_TO_TICKS(1000));
