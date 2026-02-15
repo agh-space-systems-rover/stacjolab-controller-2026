@@ -14,9 +14,9 @@ void on_heater_enable(const msg_t *msg, void *user_ctx);
 
 #define HEATER_CONFIG_MSG_TYPE 0x12
 typedef struct {
-    float high_temp_threshold;
-    float low_temp_threshold;
-    float heater_duty_cycle;
+    uint8_t high_temp_threshold;
+    uint8_t low_temp_threshold;
+    uint8_t heater_duty_cycle;
 } heater_config_msg_t;
 void on_heater_config(const msg_t *msg, void *user_ctx);
 
@@ -24,6 +24,7 @@ void on_heater_config(const msg_t *msg, void *user_ctx);
 typedef struct {
     uint8_t tc_id;
 } get_tc_temp_msg_t;
+void on_get_tc_temp(const msg_t *msg, void *user_ctx);
 
 #define RESP_TC_TEMP_MSG_TYPE 0x16
 typedef struct {

@@ -17,7 +17,7 @@ esp_err_t power_switch_init(power_switch_t *power_switch, uint8_t id) {
     power_switch->pwm_driver.channel = power_switch_pwm_channels[id];
     power_switch->pwm_driver.gpio_num = power_switch_pwm_pins[id];
     power_switch->pwm_driver.freq_hz = LEDC_TIMER_0_FREQ;
-    power_switch->pwm_driver.duty_resolution = LEDC_TIMER_10_BIT;
+    power_switch->pwm_driver.duty_resolution = LEDC_TIMER_0_RESOLUTION;
 
     return pwm_driver_init(&power_switch->pwm_driver);
 }

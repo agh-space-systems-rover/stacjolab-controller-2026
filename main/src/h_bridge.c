@@ -23,14 +23,14 @@ esp_err_t h_bridge_init(h_bridge_t* h_bridge, uint8_t h_bridge_id) {
     h_bridge->pwm_driver1.channel = h_bridge_pwm1_channels[h_bridge_id];
     h_bridge->pwm_driver1.gpio_num = h_bridge_pwm1_pins[h_bridge_id];
     h_bridge->pwm_driver1.freq_hz = LEDC_TIMER_0_FREQ;
-    h_bridge->pwm_driver1.duty_resolution = LEDC_TIMER_10_BIT;
+    h_bridge->pwm_driver1.duty_resolution = LEDC_TIMER_0_RESOLUTION;
 
     h_bridge->pwm_driver2.speed_mode = LEDC_LOW_SPEED_MODE;
     h_bridge->pwm_driver2.timer = LEDC_TIMER_0;
     h_bridge->pwm_driver2.channel = h_bridge_pwm2_channels[h_bridge_id];
     h_bridge->pwm_driver2.gpio_num = h_bridge_pwm2_pins[h_bridge_id];
     h_bridge->pwm_driver2.freq_hz = LEDC_TIMER_0_FREQ;
-    h_bridge->pwm_driver2.duty_resolution = LEDC_TIMER_10_BIT;
+    h_bridge->pwm_driver2.duty_resolution = LEDC_TIMER_0_RESOLUTION;
 
     pwm_driver_init(&h_bridge->pwm_driver1);
     pwm_driver_init(&h_bridge->pwm_driver2);

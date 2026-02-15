@@ -37,14 +37,26 @@ esp_err_t stacjolab_controller_init(stacjolab_controller_t* controller) {
     ESP_ERROR_CHECK(thermocouple_manager_init(&controller->thermocouple_manager));
 
     // Initialize temperature control config
-    controller->temp_control_config.high_temp_threshold = 70.0f;
-    controller->temp_control_config.low_temp_threshold = 40.0f;
-    controller->temp_control_config.heater_duty_cycle = 90.0f;
-    controller->temp_control_config.heating_enabled = true;
+    controller->temp_control_config.high_temp_threshold = 50;
+    controller->temp_control_config.low_temp_threshold = 35;
+    controller->temp_control_config.heater_duty_cycle = 25;
+    controller->temp_control_config.heating_enabled = false;
 
     ESP_LOGI(TAG, "Controller initialized");
 
     return ESP_OK;
+}
+
+void temp_read_task(void *arg) {
+    while (1) {
+        thermocouple_read_all(&stacjolab_controller.thermocouple_manager);
+
+        ESP_LOGI(TAG, "TC0: %.2f C, fault: %d", get_temperature_by_id(TC_0_ID), get_thermocouple_fault_by_id(TC_0_ID));
+        ESP_LOGI(TAG, "TC1: %.2f C, fault: %d", get_temperature_by_id(TC_1_ID), get_thermocouple_fault_by_id(TC_1_ID));
+        ESP_LOGI(TAG, "TC2: %.2f C, fault: %d", get_temperature_by_id(TC_2_ID), get_thermocouple_fault_by_id(TC_2_ID));
+
+        vTaskDelay(pdMS_TO_TICKS(500));
+    }
 }
 
 void temp_control_task(void *arg) {
@@ -54,7 +66,7 @@ void temp_control_task(void *arg) {
         gpio_set_level(LED2_PIN, stacjolab_controller.power_switch_ch_0.enabled);
         gpio_set_level(LED1_PIN, stacjolab_controller.temp_control_config.heating_enabled);
 
-        thermocouple_read_all(&stacjolab_controller.thermocouple_manager);
+        // thermocouple_read_all(&stacjolab_controller.thermocouple_manager);
 
         // ESP_LOGI(TAG, "TC0: %.2f C, fault: %d", get_temperature_by_id(TC_0_ID), get_thermocouple_fault_by_id(TC_0_ID));
         // ESP_LOGI(TAG, "TC1: %.2f C, fault: %d", get_temperature_by_id(TC_1_ID), get_thermocouple_fault_by_id(TC_1_ID));

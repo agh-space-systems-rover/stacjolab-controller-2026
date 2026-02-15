@@ -93,6 +93,7 @@ esp_err_t create_tasks() {
     xTaskCreate(supervisor_task, "supervisor_task", 4096, NULL, 5, NULL);
     xTaskCreate(esp_now_task, "esp_now_task", 4096, NULL, 5, NULL);
     xTaskCreate(temp_control_task, "temp_control_task", 4096, NULL, 5, NULL);
+    xTaskCreate(temp_read_task, "temp_read_task", 4096, NULL, 5, NULL);
 
     return ESP_OK;
 }

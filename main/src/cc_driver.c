@@ -11,7 +11,7 @@ esp_err_t cc_driver_init(cc_driver_t *cc_driver) {
     cc_driver->pwm_driver.channel = LEDC_CHANNEL_4;
     cc_driver->pwm_driver.gpio_num = CC_PWM_PIN;
     cc_driver->pwm_driver.freq_hz = LEDC_TIMER_0_FREQ;
-    cc_driver->pwm_driver.duty_resolution = LEDC_TIMER_10_BIT;
+    cc_driver->pwm_driver.duty_resolution = LEDC_TIMER_0_RESOLUTION;
 
     return pwm_driver_init(&cc_driver->pwm_driver);
 }

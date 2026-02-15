@@ -10,13 +10,14 @@
 #include "thermocouple.h"
 
 #define LEDC_TIMER_0_FREQ 100
+#define LEDC_TIMER_0_RESOLUTION LEDC_TIMER_14_BIT
 
 #define TC_HEATER TC_0_ID
 #define TC_INSIDE_OVEN TC_1_ID
 
 #define POWER_SWITCH_HEATER POWER_SWITCH_0_ID
 
-#define MAX_HEATER_TEMP 150
+#define MAX_HEATER_TEMP 60
 
 typedef struct {
 
@@ -50,4 +51,5 @@ extern stacjolab_controller_t stacjolab_controller;
 
 esp_err_t stacjolab_controller_init(stacjolab_controller_t* controller);
 
+void temp_read_task(void *arg);
 void temp_control_task(void *arg);

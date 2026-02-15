@@ -128,7 +128,8 @@ esp_err_t thermocouple_read(thermocouple_t* thermocouple) {
     memset(&t, 0, sizeof(t));
     t.length = 32;
     t.rx_buffer = thermocouple->register_data;
-    ret = spi_device_transmit(thermocouple->spi_handle, &t);
+    // ret = spi_device_transmit(thermocouple->spi_handle, &t);
+    ret = spi_device_polling_transmit(thermocouple->spi_handle, &t);
     if(ret != ESP_OK) {
         ESP_LOGE(TAG, "Failed to read from SPI device: %s", esp_err_to_name(ret));
         return ret;
