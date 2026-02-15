@@ -12,7 +12,8 @@
 
 
 static const char *TAG = "ESP_NOW";
-static const uint8_t peer_addr[] = {0x48, 0x27, 0xE2, 0x14, 0xab, 0xC4};
+// 98:88:e0:1c:3b:74
+static const uint8_t peer_addr[] = {0x98, 0x88, 0xe0, 0x1c, 0x3b, 0x74};
 
 void esp_now_register_callbacks();
 
