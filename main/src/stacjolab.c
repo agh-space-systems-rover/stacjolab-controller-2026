@@ -55,7 +55,7 @@ void temp_read_task(void *arg) {
         ESP_LOGI(TAG, "TC1: %.2f C, fault: %d", get_temperature_by_id(TC_1_ID), get_thermocouple_fault_by_id(TC_1_ID));
         ESP_LOGI(TAG, "TC2: %.2f C, fault: %d", get_temperature_by_id(TC_2_ID), get_thermocouple_fault_by_id(TC_2_ID));
 
-        vTaskDelay(pdMS_TO_TICKS(500));
+        vTaskDelay(pdMS_TO_TICKS(TEMP_READ_TASK_INTERVAL_MS));
     }
 }
 
@@ -101,7 +101,7 @@ void temp_control_task(void *arg) {
             power_switch_enable(power_switch_heater, 0);
         }
 
-        vTaskDelay(pdMS_TO_TICKS(500));
+        vTaskDelay(pdMS_TO_TICKS(TEMP_CONTROL_TASK_INTERVAL_MS));
     }
 
 }

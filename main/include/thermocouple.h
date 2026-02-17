@@ -37,7 +37,7 @@ typedef struct {
 
 typedef struct {
 
-    thermocouple_t thermocouples[3];
+    thermocouple_t thermocouples[TC_COUNT];
 
 } thermocouple_manager_t;
 

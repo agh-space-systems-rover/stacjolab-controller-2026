@@ -30,6 +30,7 @@ void on_get_tc_temp(const msg_t *msg, void *user_ctx);
 typedef struct {
     uint8_t tc_id;
     int16_t temp;   // 21.37 C = 2137
+    // add flags for fault conditions (open circuit, short to GND, short to VCC) as bit fields
     uint8_t fault;  // 0 = no fault, 1 = fault detected
 } resp_tc_temp_msg_t;
 

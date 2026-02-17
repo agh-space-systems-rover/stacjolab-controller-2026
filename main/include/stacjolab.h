@@ -19,6 +19,9 @@
 
 #define MAX_HEATER_TEMP 60
 
+#define TEMP_READ_TASK_INTERVAL_MS 500
+#define TEMP_CONTROL_TASK_INTERVAL_MS 1000
+
 typedef struct {
 
     float high_temp_threshold;
