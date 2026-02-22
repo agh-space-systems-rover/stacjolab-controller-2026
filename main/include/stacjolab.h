@@ -1,5 +1,6 @@
 #pragma once
 
+#include "sdkconfig.h"
 #include "esp_err.h"
 
 #include "pin_def.h"
@@ -17,7 +18,7 @@
 
 #define POWER_SWITCH_HEATER POWER_SWITCH_0_ID
 
-#define MAX_HEATER_TEMP 60
+#define MAX_HEATER_TEMP CONFIG_STACJOLAB_MAX_HEATER_TEMP
 
 #define TEMP_READ_TASK_INTERVAL_MS 500
 #define TEMP_CONTROL_TASK_INTERVAL_MS 1000
