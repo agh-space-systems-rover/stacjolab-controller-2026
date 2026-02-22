@@ -20,6 +20,11 @@ void supervisor_task(void *arg) {
 
     dispatcher_init();
     dispatcher_register_handler(0x00, on_ping, NULL);
+    dispatcher_register_handler(HEATER_MSG_TYPE, on_heater_enable, NULL);
+    dispatcher_register_handler(HEATER_CONFIG_MSG_TYPE, on_heater_config, NULL);
+    dispatcher_register_handler(GET_TC_TEMP_MSG_TYPE, on_get_tc_temp, NULL);
+    dispatcher_register_handler(H_BRIDGE_MSG_TYPE, on_h_bridge_set_speed, NULL);
+    dispatcher_register_handler(CC_DRIVER_MSG_TYPE, on_cc_driver_set_duty, NULL);
 
     while (1) {
         supervisor_status_report();

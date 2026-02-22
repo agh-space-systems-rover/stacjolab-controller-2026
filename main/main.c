@@ -12,7 +12,7 @@
 #include "esp_now_driver.h"
 #include "tlv.h"
 #include "pwm_driver.h"
-
+#include "stacjolab.h"
 
 static const char *TAG = "main";
 
@@ -24,18 +24,27 @@ esp_err_t init();
 esp_err_t create_tasks();
 esp_err_t create_queues();
 
+stacjolab_controller_t stacjolab_controller;
 
 void app_main(void) {
     ESP_LOGI(TAG, "Initializing stacjolab controller");
 
 
-    // Initialize stacjolab driver
     ESP_ERROR_CHECK(init());
+    ESP_ERROR_CHECK(stacjolab_controller_init(&stacjolab_controller));
     ESP_ERROR_CHECK(create_queues());
     ESP_ERROR_CHECK(create_tasks());
+    
+    // Test
+
+    h_bridge_set_speed(&stacjolab_controller.h_bridge_ch_0, 50);
+    h_bridge_set_speed(&stacjolab_controller.h_bridge_ch_1, 50);
+
+    cc_driver_duty(&stacjolab_controller.cc_driver, 50);
 
     while(1) {
         vTaskDelay(pdMS_TO_TICKS(1000));
+
     }
 }
 
@@ -83,6 +92,8 @@ esp_err_t create_tasks() {
     //TODO: set proper stack size and priority
     xTaskCreate(supervisor_task, "supervisor_task", 4096, NULL, 5, NULL);
     xTaskCreate(esp_now_task, "esp_now_task", 4096, NULL, 5, NULL);
+    xTaskCreate(temp_control_task, "temp_control_task", 4096, NULL, 5, NULL);
+    xTaskCreate(temp_read_task, "temp_read_task", 4096, NULL, 5, NULL);
 
     return ESP_OK;
 }
