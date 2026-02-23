@@ -23,6 +23,8 @@ void supervisor_task(void *arg) {
     dispatcher_register_handler(HEATER_MSG_TYPE, on_heater_enable, NULL);
     dispatcher_register_handler(HEATER_CONFIG_MSG_TYPE, on_heater_config, NULL);
     dispatcher_register_handler(GET_TC_TEMP_MSG_TYPE, on_get_tc_temp, NULL);
+    dispatcher_register_handler(LED_STRIP_SET_SOLID_MSG_TYPE, on_led_strip_set_solid, NULL);
+    dispatcher_register_handler(LED_STRIP_SET_SINGLE_MSG_TYPE, on_led_strip_set_single, NULL);
     dispatcher_register_handler(H_BRIDGE_MSG_TYPE, on_h_bridge_set_speed, NULL);
     dispatcher_register_handler(CC_DRIVER_MSG_TYPE, on_cc_driver_set_duty, NULL);
 

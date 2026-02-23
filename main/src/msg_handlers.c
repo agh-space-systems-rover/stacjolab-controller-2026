@@ -64,6 +64,28 @@ void on_get_tc_temp(const msg_t *msg, void *user_ctx) {
     xQueueSend(q_esp_now_tx, &response, pdMS_TO_TICKS(100));
 }
 
+void on_led_strip_set_solid(const msg_t *msg, void *user_ctx) {
+    if(msg->length != sizeof(led_strip_set_solid_msg_t)) {
+        // Invalid message length
+        return;
+    }
+
+    led_strip_set_solid_msg_t *led_msg = (led_strip_set_solid_msg_t *)msg->payload;
+
+    led_strip_set_solid_color(&stacjolab_controller.led_strip, led_msg->red, led_msg->green, led_msg->blue);
+}
+
+void on_led_strip_set_single(const msg_t *msg, void *user_ctx) {
+    if(msg->length != sizeof(led_strip_set_single_msg_t)) {
+        // Invalid message length
+        return;
+    }
+
+    led_strip_set_single_msg_t *led_msg = (led_strip_set_single_msg_t *)msg->payload;
+
+    led_strip_set_single_led(&stacjolab_controller.led_strip, led_msg->index, led_msg->red, led_msg->green, led_msg->blue);
+}
+
 void on_h_bridge_set_speed(const msg_t *msg, void *user_ctx) {
     if(msg->length != sizeof(h_bridge_msg_t)) {
         // Invalid message length
