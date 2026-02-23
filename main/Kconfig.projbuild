@@ -1,0 +1,33 @@
+menu "Stacjolab Controller Configuration"
+
+    config STACJOLAB_MAX_HEATER_TEMP
+        int "Max heater temperature"
+        default 150
+        help
+            Maximum allowed temperature for the heater.
+
+    config STACJOLAB_HIGH_TEMP_THRESHOLD
+        int "High temperature threshold"
+        default 100
+        help
+            High temperature threshold for the heater.
+
+    config STACJOLAB_LOW_TEMP_THRESHOLD
+        int "Low temperature threshold"
+        default 80
+        help
+            Low temperature threshold for the heater.
+
+    config STACJOLAB_HEATER_DUTY_CYCLE
+        int "Heater duty cycle"
+        default 70
+        help
+            Heater duty cycle percentage.
+
+    config STACJOLAB_HEATING_ENABLED
+        bool "Heating enabled by default"
+        default y
+        help
+            Enable heating by default on startup.
+
+endmenu
