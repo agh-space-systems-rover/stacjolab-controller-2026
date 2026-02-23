@@ -8,6 +8,7 @@
 #include "cc_driver.h"
 #include "power_switch.h"
 #include "thermocouple.h"
+#include "ws28_driver.h"
 
 #define LEDC_TIMER_0_FREQ 100
 #define LEDC_TIMER_0_RESOLUTION LEDC_TIMER_14_BIT
@@ -47,6 +48,8 @@ typedef struct {
     thermocouple_manager_t thermocouple_manager;
     
     temp_control_config_t temp_control_config;
+
+    led_strip_t led_strip;
     
 }stacjolab_controller_t;
 
