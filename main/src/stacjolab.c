@@ -47,6 +47,9 @@ esp_err_t stacjolab_controller_init(stacjolab_controller_t* controller) {
     controller->temp_control_config.heating_enabled = false;
 #endif
 
+    ESP_ERROR_CHECK(led_strip_init(&controller->led_strip));
+    led_strip_set_solid_color(&controller->led_strip, 0, 0, 100); // Set LED strip to blue
+    
     ESP_LOGI(TAG, "Controller initialized");
 
     return ESP_OK;

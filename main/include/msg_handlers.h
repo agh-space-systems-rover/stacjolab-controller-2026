@@ -41,6 +41,23 @@ typedef struct {
     uint8_t fault;  // 0 = no fault, 1 = fault detected
 } resp_tc_temp_msg_t;
 
+#define LED_STRIP_SET_SOLID_MSG_TYPE 0x20
+typedef struct {
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
+} led_strip_set_solid_msg_t;
+void on_led_strip_set_solid(const msg_t *msg, void *user_ctx);
+
+#define LED_STRIP_SET_SINGLE_MSG_TYPE 0x21
+typedef struct {
+    uint8_t index;
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
+} led_strip_set_single_msg_t;
+void on_led_strip_set_single(const msg_t *msg, void *user_ctx);
+
 #define H_BRIDGE_MSG_TYPE 0x50
 typedef struct {
     int8_t h_bridge_id;
