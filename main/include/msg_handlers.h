@@ -47,3 +47,14 @@ typedef struct {
 } cc_driver_msg_t;
 void on_cc_driver_set_duty(const msg_t *msg, void *user_ctx);
 
+#define WEIGHT_REQ_MSG_TYPE 0xD0
+void on_weight_req(const msg_t *msg, void *user_ctx);
+
+#define WEIGHT_RESP_MSG_TYPE 0xD1
+typedef struct {
+    int32_t weight;
+} weight_resp_msg_t;
+
+#define WEIGHT_TARE_MSG_TYPE 0xD2
+void on_weight_tare(const msg_t *msg, void *user_ctx);
+

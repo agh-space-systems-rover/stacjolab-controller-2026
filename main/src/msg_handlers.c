@@ -1,5 +1,6 @@
 #include "msg_handlers.h"
 #include "stacjolab.h"
+#include "tensometer.h"
 
 #include "freertos/idf_additions.h"
 #include <string.h>
@@ -87,4 +88,30 @@ void on_cc_driver_set_duty(const msg_t *msg, void *user_ctx) {
     cc_driver_msg_t *cc_msg = (cc_driver_msg_t *)msg->payload;
 
     cc_driver_duty(&stacjolab_controller.cc_driver, cc_msg->duty);
+}
+
+void on_weight_req(const msg_t *msg, void *user_ctx) {
+    (void)user_ctx;
+    if(msg->length != 0) {
+        return;
+    }
+
+    int32_t voltage_uv = tensometer_get_voltage_sum();
+
+    msg_t response;
+    response.type = WEIGHT_RESP_MSG_TYPE; // 0xD1
+    response.length = sizeof(weight_resp_msg_t); // 4 bytes
+    
+    weight_resp_msg_t *resp_payload = (weight_resp_msg_t *)response.payload;
+    resp_payload->weight = voltage_uv;
+
+    xQueueSend(q_esp_now_tx, &response, pdMS_TO_TICKS(100));
+}
+
+void on_weight_tare(const msg_t *msg, void *user_ctx) {
+    (void)user_ctx;
+    if(msg->length != 0) {
+        return;
+    }
+    tensometer_tare();
 }

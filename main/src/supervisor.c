@@ -25,6 +25,8 @@ void supervisor_task(void *arg) {
     dispatcher_register_handler(GET_TC_TEMP_MSG_TYPE, on_get_tc_temp, NULL);
     dispatcher_register_handler(H_BRIDGE_MSG_TYPE, on_h_bridge_set_speed, NULL);
     dispatcher_register_handler(CC_DRIVER_MSG_TYPE, on_cc_driver_set_duty, NULL);
+    dispatcher_register_handler(WEIGHT_REQ_MSG_TYPE, on_weight_req, NULL);
+    dispatcher_register_handler(WEIGHT_TARE_MSG_TYPE, on_weight_tare, NULL);
 
     while (1) {
         supervisor_status_report();

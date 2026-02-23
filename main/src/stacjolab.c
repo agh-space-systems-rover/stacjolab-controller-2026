@@ -23,24 +23,24 @@ esp_err_t stacjolab_controller_init(stacjolab_controller_t* controller) {
     gpio_config(&io_conf);
 
     // Initialize H-Bridge channels
-    ESP_ERROR_CHECK(h_bridge_init(&controller->h_bridge_ch_1, H_BRIDGE_1_ID));
-    ESP_ERROR_CHECK(h_bridge_init(&controller->h_bridge_ch_0, H_BRIDGE_0_ID));
+    // ESP_ERROR_CHECK(h_bridge_init(&controller->h_bridge_ch_1, H_BRIDGE_1_ID));
+    // ESP_ERROR_CHECK(h_bridge_init(&controller->h_bridge_ch_0, H_BRIDGE_0_ID));
 
-    // Initialize CC driver
-    ESP_ERROR_CHECK(cc_driver_init(&controller->cc_driver));
+    // // Initialize CC driver
+    // ESP_ERROR_CHECK(cc_driver_init(&controller->cc_driver));
 
-    // Initialize power switches
-    ESP_ERROR_CHECK(power_switch_init(&controller->power_switch_ch_0, POWER_SWITCH_0_ID));
-    ESP_ERROR_CHECK(power_switch_init(&controller->power_switch_ch_1, POWER_SWITCH_1_ID));
-    ESP_ERROR_CHECK(power_switch_init(&controller->power_switch_ch_2, POWER_SWITCH_2_ID));
+    // // Initialize power switches
+    // ESP_ERROR_CHECK(power_switch_init(&controller->power_switch_ch_0, POWER_SWITCH_0_ID));
+    // ESP_ERROR_CHECK(power_switch_init(&controller->power_switch_ch_1, POWER_SWITCH_1_ID));
+    // ESP_ERROR_CHECK(power_switch_init(&controller->power_switch_ch_2, POWER_SWITCH_2_ID));
 
-    ESP_ERROR_CHECK(thermocouple_manager_init(&controller->thermocouple_manager));
+    // ESP_ERROR_CHECK(thermocouple_manager_init(&controller->thermocouple_manager));
 
-    // Initialize temperature control config
-    controller->temp_control_config.high_temp_threshold = 50;
-    controller->temp_control_config.low_temp_threshold = 35;
-    controller->temp_control_config.heater_duty_cycle = 25;
-    controller->temp_control_config.heating_enabled = false;
+    // // Initialize temperature control config
+    // controller->temp_control_config.high_temp_threshold = 50;
+    // controller->temp_control_config.low_temp_threshold = 35;
+    // controller->temp_control_config.heater_duty_cycle = 25;
+    // controller->temp_control_config.heating_enabled = false;
 
     ESP_LOGI(TAG, "Controller initialized");
 

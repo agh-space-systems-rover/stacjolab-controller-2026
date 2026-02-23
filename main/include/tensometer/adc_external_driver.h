@@ -5,6 +5,8 @@
 #ifndef ADC_EXTERNAL_DRIVER_H_
 #define ADC_EXTERNAL_DRIVER_H_
 
+#include "adc_external_registers.h"
+
 #include "driver/i2c.h"
 #include <stdint.h>
 #include <stdbool.h>
@@ -28,23 +30,16 @@ typedef enum {
 } ExternalAnalog_AddressPinTypeDef;
 
 /**
- * @brief Type of the strain gauge beam used (each has slightly different calibration constant)
- */
-typedef enum {
-    EXTERNAL_ANALOG_BEAM_1 = 0,
-    EXTERNAL_ANALOG_BEAM_2 = 1,
-    EXTERNAL_ANALOG_BEAM_3 = 2,
-    EXTERNAL_ANALOG_BEAM_4 = 3
-} ExternalAnalog_StrainGaugeBeamTypeDef;
-
-/**
  * @brief Initialization struct for the driver
  */
 typedef struct {
     i2c_port_t i2c_port; // Fix: Use i2c_port_t directly
     ExternalAnalog_AddressPinTypeDef PinA0;
     ExternalAnalog_AddressPinTypeDef PinA1;
-    ExternalAnalog_StrainGaugeBeamTypeDef BeamType;
+    ExternalAnalog_Mux Mux;
+    ExternalAnalog_Gain Gain;
+    ExternalAnalog_DataRate DataRate;
+    void (*DataReadyCallback)(int32_t value);
 } ExternalAnalog_DriverInitTypeDef;
 
 /**
@@ -57,33 +52,26 @@ typedef struct {
 
     ExternalAnalog_AddressPinTypeDef PinA0;
     ExternalAnalog_AddressPinTypeDef PinA1;
-    ExternalAnalog_StrainGaugeBeamTypeDef BeamType;
-
+    ExternalAnalog_Mux Mux;
+    ExternalAnalog_Gain GainEnum; // Added to store the enum value
+    void (*DataReadyCallback)(int32_t value);
+    
     int32_t VRef;
     uint8_t Gain;
 
     int32_t ADCValueFiltered;           // current filtered ADC value via moving average filter
-    int32_t ADCValueCorrected;          // current filtered ADC value which is correctly offset to compensate tare weight and internal resistance
-    int32_t ADCTareWeightValue;         // ADC value which should be interpreted as zero grams
-
-    int32_t Voltage;                    // filtered voltage from (-VREF / GAIN) to ((+VREF / GAIN) - 1 LSB)
-    int32_t Weight;                     // calculated weight in grams
-
-    uint16_t CalibrationSampleIndex;
-    int32_t* pCalibrationSamples;
-    int32_t CalibrationOffset;
-
+    int32_t Voltage;                    // filtered voltage in microvolts
+    int32_t VoltageOffset;              // voltage offset for tare
+    
     int64_t MovingAverageSum;
-    uint16_t MovingAverageSampleIndex;
+    uint32_t MovingAverageSampleIndex; // Changed to uint32_t to match size
 
     bool isModuleInitialized;
-    bool isFilterInitialized;
-    bool isCalibrating;
 } ExternalAnalog_DriverTypeDef;
 
 ExternalAnalog_StatusTypeDef ExternalAnalog_Driver_Init(ExternalAnalog_DriverTypeDef* pExternalAnalogDriver, const ExternalAnalog_DriverInitTypeDef* pExternalAnalogInit);
 ExternalAnalog_StatusTypeDef ExternalAnalog_Driver_DataReadyCallback(ExternalAnalog_DriverTypeDef* pExternalAnalogDriver);
-ExternalAnalog_StatusTypeDef ExternalAnalog_Driver_GetWeightValue(ExternalAnalog_DriverTypeDef* pExternalAnalogDriver, int32_t* pData);
-ExternalAnalog_StatusTypeDef ExternalAnalog_Driver_TareWeight(ExternalAnalog_DriverTypeDef* pExternalAnalogDriver);
+ExternalAnalog_StatusTypeDef ExternalAnalog_Driver_Tare(ExternalAnalog_DriverTypeDef* pExternalAnalogDriver);
+void ExternalAnalog_Driver_SetMovingAverageSize(uint32_t size);
 
 #endif //ADC_EXTERNAL_DRIVER_H_

@@ -34,7 +34,7 @@
  /**
   * @brief Configuration register 0
   */
- typedef struct __packed {
+ typedef struct __attribute__((packed)) {
      uint8_t pga_bypass  : 1;    /* Disables and bypasses the internal low-noise PGA, RW, 1 bit */
      uint8_t gain        : 3;    /* Gain configuration, RW, 3 bits */
      uint8_t mux         : 4;    /* Input multiplexer configuration, RW, 4 bits */
@@ -43,7 +43,7 @@
  /**
   * @brief Configuration register 1
   */
- typedef struct __packed {
+ typedef struct __attribute__((packed)) {
      uint8_t ts          : 1;    /* Temperature sensor mode, RW, 1 bit */
      uint8_t vref        : 2;    /* Voltage reference selection, RW, 2 bits */
      uint8_t cm          : 1;    /* Conversion mode, RW, 1 bit */
@@ -54,7 +54,7 @@
  /**
   * @brief Configuration register 2
   */
- typedef struct __packed {
+ typedef struct __attribute__((packed)) {
      uint8_t idac        : 3;    /* IDAC current setting, RW, 3 bits */
      uint8_t bcs         : 1;    /* Burn-out current sources, RW, 1 bit */
      uint8_t crc         : 2;    /* Data integrity check enable, RW, 2 bits */
@@ -65,7 +65,7 @@
  /**
   * @brief Configuration register 3
   */
- typedef struct __packed {
+ typedef struct __attribute__((packed)) {
      uint8_t _reserved   : 2;    /* Reserved, R, 2 bits, ALWAYS WRITE 0 */
      uint8_t i2mux       : 3;    /* IDAC2 routing configuration, RW, 3 bits */
      uint8_t i1mux       : 3;    /* IDAC1 routing configuration, RW, 3 bits */

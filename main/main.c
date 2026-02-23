@@ -14,6 +14,10 @@
 #include "pwm_driver.h"
 #include "stacjolab.h"
 
+// #include "adc_external_driver.h"
+#include "pin_def.h"
+#include "tensometer.h" // Include tensometer.h
+
 static const char *TAG = "main";
 
 QueueHandle_t q_esp_now_rx;
@@ -35,6 +39,9 @@ void app_main(void) {
     ESP_ERROR_CHECK(create_queues());
     ESP_ERROR_CHECK(create_tasks());
     
+    // Create Tensometer Task via tensometer module
+    tensometer_init(TENSO_SDA_PIN, TENSO_SCL_PIN);
+
     // Test
 
     h_bridge_set_speed(&stacjolab_controller.h_bridge_ch_0, 50);
@@ -44,7 +51,6 @@ void app_main(void) {
 
     while(1) {
         vTaskDelay(pdMS_TO_TICKS(1000));
-
     }
 }
 
@@ -92,8 +98,8 @@ esp_err_t create_tasks() {
     //TODO: set proper stack size and priority
     xTaskCreate(supervisor_task, "supervisor_task", 4096, NULL, 5, NULL);
     xTaskCreate(esp_now_task, "esp_now_task", 4096, NULL, 5, NULL);
-    xTaskCreate(temp_control_task, "temp_control_task", 4096, NULL, 5, NULL);
-    xTaskCreate(temp_read_task, "temp_read_task", 4096, NULL, 5, NULL);
+    // xTaskCreate(temp_control_task, "temp_control_task", 4096, NULL, 5, NULL);
+    // xTaskCreate(temp_read_task, "temp_read_task", 4096, NULL, 5, NULL);
 
     return ESP_OK;
 }
