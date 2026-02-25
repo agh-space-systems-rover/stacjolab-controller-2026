@@ -53,7 +53,8 @@ typedef struct {
     ExternalAnalog_AddressPinTypeDef PinA0;
     ExternalAnalog_AddressPinTypeDef PinA1;
     ExternalAnalog_Mux Mux;
-    ExternalAnalog_Gain GainEnum; // Added to store the enum value
+    ExternalAnalog_Gain GainEnum;
+    ExternalAnalog_DataRate DataRateEnum;
     void (*DataReadyCallback)(int32_t value);
     
     int32_t VRef;

@@ -37,11 +37,12 @@ void app_main(void) {
     ESP_ERROR_CHECK(init());
     ESP_ERROR_CHECK(stacjolab_controller_init(&stacjolab_controller));
     ESP_ERROR_CHECK(create_queues());
-    ESP_ERROR_CHECK(create_tasks());
-    
+
     // Create Tensometer Task via tensometer module
     tensometer_init(TENSO_SDA_PIN, TENSO_SCL_PIN);
 
+    ESP_ERROR_CHECK(create_tasks());
+    
     // Test
 
     h_bridge_set_speed(&stacjolab_controller.h_bridge_ch_0, 50);
@@ -100,6 +101,7 @@ esp_err_t create_tasks() {
     xTaskCreate(esp_now_task, "esp_now_task", 4096, NULL, 5, NULL);
     // xTaskCreate(temp_control_task, "temp_control_task", 4096, NULL, 5, NULL);
     // xTaskCreate(temp_read_task, "temp_read_task", 4096, NULL, 5, NULL);
+    xTaskCreate(tensometer_task, "tensometer_task", 4096, NULL, 5, NULL);
 
     return ESP_OK;
 }

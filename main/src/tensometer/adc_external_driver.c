@@ -83,12 +83,15 @@ ExternalAnalog_StatusTypeDef ExternalAnalog_Driver_Init(ExternalAnalog_DriverTyp
 
     // Initialize other fields
     pExternalAnalogDriver->Mux = pExternalAnalogInit->Mux;
-    pExternalAnalogDriver->GainEnum = pExternalAnalogInit->Gain; // Store the enum
+    pExternalAnalogDriver->GainEnum = pExternalAnalogInit->Gain; 
+    pExternalAnalogDriver->DataRateEnum = pExternalAnalogInit->DataRate;
     pExternalAnalogDriver->DataReadyCallback = pExternalAnalogInit->DataReadyCallback;
     pExternalAnalogDriver->ADCValueFiltered = 0;
+
     // pExternalAnalogDriver->ADCValueCorrected = 0; // Removed member
     pExternalAnalogDriver->VoltageOffset = 0;
     pExternalAnalogDriver->Voltage = 0;
+    pExternalAnalogDriver->IsDataValid = false;
     pExternalAnalogDriver->isModuleInitialized = false;
 
     pExternalAnalogDriver->MovingAverageSum = 0;
@@ -101,6 +104,9 @@ ExternalAnalog_StatusTypeDef ExternalAnalog_Driver_Init(ExternalAnalog_DriverTyp
         ESP_LOGE(TAG_ADC, "Failed to reset ADC module");
         return EXTERNAL_ANALOG_DRIVER_ERROR;
     }
+
+    // Wait for the reset to complete as per datasheet (min 50us, using 10ms for safety)
+    vTaskDelay(pdMS_TO_TICKS(10));
 
     // Configure the ADC registers
     ExternalAnalog_Register0 register0 = { .mux = pExternalAnalogDriver->Mux, .gain = pExternalAnalogInit->Gain };
@@ -136,25 +142,43 @@ ExternalAnalog_StatusTypeDef ExternalAnalog_Driver_Init(ExternalAnalog_DriverTyp
 
 ExternalAnalog_StatusTypeDef ExternalAnalog_Driver_DataReadyCallback(ExternalAnalog_DriverTypeDef* pExternalAnalogDriver) {
     if (!pExternalAnalogDriver->isModuleInitialized) {
+        ESP_LOGE(TAG_ADC, "ADC module not initialized");
         return EXTERNAL_ANALOG_DRIVER_ERROR;
     }
 
     // 1. Configure MUX (Switch channel)
     ExternalAnalog_Register0 register0 = { .mux = pExternalAnalogDriver->Mux, .gain = pExternalAnalogDriver->GainEnum, .pga_bypass = 0 }; // Use configured gain
     if (command_register_write(pExternalAnalogDriver, REGISTER0, (uint8_t*)&register0) != EXTERNAL_ANALOG_DRIVER_OK) {
+        ESP_LOGE(TAG_ADC, "Failed to write register 0");
         return EXTERNAL_ANALOG_DRIVER_ERROR; 
     }
 
     // 2. Start Conversion
     if (command_start(pExternalAnalogDriver) != EXTERNAL_ANALOG_DRIVER_OK) {
+         ESP_LOGE(TAG_ADC, "Failed to start ADC conversion");   
          return EXTERNAL_ANALOG_DRIVER_ERROR;
     }
     
-    // 3. Wait for conversion (Single shot mode or just waiting for sample)
-    // At 20 SPS (default usually) or 175 SPS? 
-    // Data rate is set in Init to 175 SPS (DATA_RATE_175_SPS). 1/175 = 5.7ms.
-    // + Settling time.
-    vTaskDelay(pdMS_TO_TICKS(10)); 
+    // 3. Wait for conversion (Single shot mode) based on Data Rate
+    uint32_t conversion_time_ms = 55; // Default for 20 SPS (50ms + margin)
+    
+    switch(pExternalAnalogDriver->DataRateEnum) {
+        case DATA_RATE_20_SPS:   conversion_time_ms = 55; break; // 50ms
+        case DATA_RATE_45_SPS:   conversion_time_ms = 25; break; // 22.2ms
+        case DATA_RATE_90_SPS:   conversion_time_ms = 15; break; // 11.1ms
+        case DATA_RATE_175_SPS:  conversion_time_ms = 8;  break; // 5.7ms
+        case DATA_RATE_330_SPS:  conversion_time_ms = 5;  break; // 3ms
+        case DATA_RATE_600_SPS:  conversion_time_ms = 3;  break; // 1.6ms
+        case DATA_RATE_1000_SPS: conversion_time_ms = 2;  break; // 1ms
+        default:                 conversion_time_ms = 55; break;
+    }
+
+    // Ensure at least 2 ticks wait if the time is very short but non-zero
+    // (FreeRTOS tick rate is usually 100Hz or 1000Hz, relying on 1ms delays might be tricky if tick is 10ms)
+    TickType_t delay_ticks = pdMS_TO_TICKS(conversion_time_ms);
+    if(delay_ticks < 2) delay_ticks = 2; // Minimum 2 ticks to be safe with scheduler jitter
+    
+    vTaskDelay(delay_ticks);
 
     // 4. Read Data
     uint32_t adc_value_24;
@@ -163,7 +187,8 @@ ExternalAnalog_StatusTypeDef ExternalAnalog_Driver_DataReadyCallback(ExternalAna
     }
 
     const int32_t adc_value = convert_int24_to_int32(adc_value_24);
-
+    
+    // ESP_LOGI(TAG_ADC, "Raw ADC value: %ld", adc_value);
     // 5. Process Data
     // User wants "reading microvolts".
     pExternalAnalogDriver->MovingAverageSum += adc_value;
