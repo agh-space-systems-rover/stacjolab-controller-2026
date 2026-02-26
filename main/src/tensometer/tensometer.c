@@ -75,6 +75,11 @@ esp_err_t tensometer_init(int sda_pin, int scl_pin) {
     ExternalAnalog_Driver_SetMovingAverageSize(TENSOMETER_MOVING_AVERAGE_SIZE); 
 
     // Perform initial tare
+    for(int i = 0; i < TENSOMETER_TARE_SAMPLES; i++) {
+        tensometer_read_all();
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
+    
     tensometer_tare();
     
     ESP_LOGI(TAG, "Tensometers initialized successfully");
@@ -86,6 +91,9 @@ int32_t tensometer_read_all(void) {
     ExternalAnalog_Driver_DataReadyCallback(&tenso1);
     ExternalAnalog_Driver_DataReadyCallback(&tenso2);
     
+    ESP_LOGI(TAG, "Read T1: %ld uV (raw: %ld), T2: %ld uV (raw: %ld)", 
+             tenso1.Voltage, tenso1.ADCValueFiltered, 
+             tenso2.Voltage, tenso2.ADCValueFiltered);
     return tensometer_get_voltage_sum();
 }
 
@@ -111,6 +119,7 @@ void tensometer_tare(void) {
     }
     
     ExternalAnalog_Driver_Tare(&tenso1);
+    vTaskDelay(pdMS_TO_TICKS(100)); // Short delay to ensure second tare is not affected by first
     ExternalAnalog_Driver_Tare(&tenso2);
     ESP_LOGI(TAG, "Tared both tensometers: offsets T1=%ld, T2=%ld", tenso1.VoltageOffset, tenso2.VoltageOffset);
 }

@@ -1,10 +1,12 @@
 #include "msg_handlers.h"
 #include "stacjolab.h"
 #include "tensometer.h"
-
+#include "esp_log.h"
 #include "freertos/idf_additions.h"
 #include <string.h>
 
+
+static const char *TAG = "MSG";
 
 void on_ping(const msg_t *msg, void *user_ctx) {
     msg_t response;
@@ -96,6 +98,11 @@ void on_weight_req(const msg_t *msg, void *user_ctx) {
         return;
     }
 
+    for(uint8_t i = 0; i < 5; i++) {
+        tensometer_read_all();
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
+
     int32_t voltage_uv = tensometer_get_voltage_sum();
 
     msg_t response;
@@ -104,7 +111,9 @@ void on_weight_req(const msg_t *msg, void *user_ctx) {
     
     weight_resp_msg_t *resp_payload = (weight_resp_msg_t *)response.payload;
     resp_payload->weight = voltage_uv;
-
+    for(int i = 0; i < response.length; i++) {
+        ESP_LOGI(TAG, "Response payload byte %d: %02x", i, response.payload[i]);
+    }
     xQueueSend(q_esp_now_tx, &response, pdMS_TO_TICKS(100));
 }
 

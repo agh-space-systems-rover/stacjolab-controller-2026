@@ -23,7 +23,7 @@
  * Conversion time approx = 1 / SPS.
  */
 #ifndef TENSOMETER_DEFAULT_DATA_RATE
-#define TENSOMETER_DEFAULT_DATA_RATE DATA_RATE_20_SPS
+#define TENSOMETER_DEFAULT_DATA_RATE DATA_RATE_175_SPS
 #endif
 
 /**
@@ -31,7 +31,7 @@
  * Larger size = smoother data but slower response.
  */
 #ifndef TENSOMETER_MOVING_AVERAGE_SIZE
-#define TENSOMETER_MOVING_AVERAGE_SIZE 10
+#define TENSOMETER_MOVING_AVERAGE_SIZE 1
 #endif
 
 /**
