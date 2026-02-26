@@ -25,17 +25,12 @@ static const char *TAG_ADC = "ADC_EXTERNAL_DRIVER";
 /**
  * @brief Number of samples needed to produce one filtered value
  */
-#ifdef CONFIG_TENSOMETER_MOVING_AVERAGE_SIZE
-static uint32_t MovingAverageSize = CONFIG_TENSOMETER_MOVING_AVERAGE_SIZE;
-#else
-static uint32_t MovingAverageSize = 256;
-#endif
+static uint32_t MovingAverageSize = 1;
+
 
 void ExternalAnalog_Driver_SetMovingAverageSize(uint32_t size) {
     MovingAverageSize = size;
 }
-
-
 
 
 /**

@@ -72,11 +72,12 @@ esp_err_t tensometer_init(int sda_pin, int scl_pin) {
     }
 
     // Set moving average size
-    ExternalAnalog_Driver_SetMovingAverageSize(TENSOMETER_MOVING_AVERAGE_SIZE); 
+    ExternalAnalog_Driver_SetMovingAverageSize(1); // TENSOMETER_MOVING_AVERAGE_SIZE
 
     // Perform initial tare
     for(int i = 0; i < TENSOMETER_TARE_SAMPLES; i++) {
         tensometer_read_all();
+
         vTaskDelay(pdMS_TO_TICKS(100));
     }
     

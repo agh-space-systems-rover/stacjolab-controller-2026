@@ -12,9 +12,7 @@
  * @brief Default Gain Setting for the ADS122C04
  * Options: GAIN1, GAIN2, GAIN4, GAIN8, GAIN16, GAIN32, GAIN64, GAIN128
  */
-#ifndef TENSOMETER_DEFAULT_GAIN
 #define TENSOMETER_DEFAULT_GAIN GAIN64
-#endif
 
 /**
  * @brief Default Data Rate Setting
@@ -22,25 +20,19 @@
  * Note: Higher data rates reduce conversion time but increase noise.
  * Conversion time approx = 1 / SPS.
  */
-#ifndef TENSOMETER_DEFAULT_DATA_RATE
 #define TENSOMETER_DEFAULT_DATA_RATE DATA_RATE_175_SPS
-#endif
 
 /**
  * @brief Number of samples for the moving average filter.
  * Larger size = smoother data but slower response.
  */
-#ifndef TENSOMETER_MOVING_AVERAGE_SIZE
-#define TENSOMETER_MOVING_AVERAGE_SIZE 1
-#endif
+#define TENSOMETER_MOVING_AVERAGE_SIZE 10
 
 /**
  * @brief Number of samples to discard/average during taring process.
  * Ensures the filter is stable before setting the offset.
  */
-#ifndef TENSOMETER_TARE_SAMPLES
 #define TENSOMETER_TARE_SAMPLES 20
-#endif
 
 
 // =================================================================================================
