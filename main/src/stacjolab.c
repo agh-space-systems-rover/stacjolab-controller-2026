@@ -48,7 +48,12 @@ esp_err_t stacjolab_controller_init(stacjolab_controller_t* controller) {
 #endif
 
     ESP_ERROR_CHECK(led_strip_init(&controller->led_strip));
-    led_strip_set_solid_color(&controller->led_strip, 0, 0, 100); // Set LED strip to blue
+
+#ifdef CONFIG_STACJOLAB_LED_ENABLED_ON_BOOT
+    led_strip_set_solid_color(&controller->led_strip, CONFIG_STACJOLAB_RED_ON_BOOT, CONFIG_STACJOLAB_GREEN_ON_BOOT, CONFIG_STACJOLAB_BLUE_ON_BOOT);
+#else
+    led_strip_set_solid_color(&controller->led_strip, 0, 0, 0);
+#endif
     
     ESP_LOGI(TAG, "Controller initialized");
 

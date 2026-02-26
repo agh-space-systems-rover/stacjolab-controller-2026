@@ -31,3 +31,37 @@ menu "Stacjolab Controller Configuration"
             Enable heating by default on startup.
 
 endmenu
+
+menu "Stacjolab LED indicator Configuration"
+
+    config STACJOLAB_LED_STRIP_LENGTH
+        int "LED strip length"
+        default 4
+        help
+            Number of LEDs in the strip.
+
+    config STACJOLAB_RED_ON_BOOT
+        int "LED red intensity on boot"
+        default 80
+        help
+            Brightness level for the LED indicator (0-255).
+    
+    config STACJOLAB_GREEN_ON_BOOT
+        int "LED green intensity on boot"
+        default 80
+        help
+            Brightness level for the LED indicator (0-255).
+
+    config STACJOLAB_BLUE_ON_BOOT
+        int "LED blue intensity on boot"
+        default 80
+        help
+            Brightness level for the LED indicator (0-255).
+
+    config STACJOLAB_LED_ENABLED_ON_BOOT
+        bool "LED indicator enabled by default"
+        default y
+        help
+            Enable LED indicator by default on startup.
+
+endmenu
