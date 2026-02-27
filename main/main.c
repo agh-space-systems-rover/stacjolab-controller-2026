@@ -33,6 +33,7 @@ stacjolab_controller_t stacjolab_controller;
 void app_main(void) {
     ESP_LOGI(TAG, "Initializing stacjolab controller");
 
+    
 
     ESP_ERROR_CHECK(init());
     ESP_ERROR_CHECK(stacjolab_controller_init(&stacjolab_controller));
@@ -44,7 +45,6 @@ void app_main(void) {
     ESP_ERROR_CHECK(create_tasks());
     
     // Test
-
     h_bridge_set_speed(&stacjolab_controller.h_bridge_ch_0, 50);
     h_bridge_set_speed(&stacjolab_controller.h_bridge_ch_1, 50);
 

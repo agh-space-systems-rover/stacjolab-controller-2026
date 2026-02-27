@@ -1,5 +1,6 @@
 #pragma once
 
+#include "sdkconfig.h"
 #include "esp_err.h"
 
 #include "pin_def.h"
@@ -8,19 +9,32 @@
 #include "cc_driver.h"
 #include "power_switch.h"
 #include "thermocouple.h"
+#include "ws28_driver.h"
+
+#include "iot_servo.h"
 
 #define LEDC_TIMER_0_FREQ 100
 #define LEDC_TIMER_0_RESOLUTION LEDC_TIMER_14_BIT
+
+#define LEDC_TIMER_1_FREQ 50
+#define LEDC_TIMER_1_RESOLUTION LEDC_TIMER_14_BIT
 
 #define TC_HEATER TC_0_ID
 #define TC_INSIDE_OVEN TC_1_ID
 
 #define POWER_SWITCH_HEATER POWER_SWITCH_0_ID
 
-#define MAX_HEATER_TEMP 60
+#define MAX_HEATER_TEMP CONFIG_STACJOLAB_MAX_HEATER_TEMP
 
 #define TEMP_READ_TASK_INTERVAL_MS 500
 #define TEMP_CONTROL_TASK_INTERVAL_MS 1000
+
+#define SERVO_COUNT 1
+#define SERVO_0_CHANNEL LEDC_CHANNEL_0
+#define SERVO_0_PIN AUX_1_PIN
+#define SERVO_0_MAX_PULSE_WIDTH_US 2500
+#define SERVO_0_MIN_PULSE_WIDTH_US 500
+#define SERVO_0_MAX_ANGLE 180
 
 typedef struct {
 
@@ -47,6 +61,8 @@ typedef struct {
     thermocouple_manager_t thermocouple_manager;
     
     temp_control_config_t temp_control_config;
+
+    led_strip_t led_strip;
     
 }stacjolab_controller_t;
 

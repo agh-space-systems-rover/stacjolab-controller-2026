@@ -6,6 +6,13 @@ extern QueueHandle_t q_esp_now_tx;
 
 void on_ping(const msg_t *msg, void *user_ctx);
 
+#define PS_SET_MSG_TYPE 0x10
+typedef struct {
+    uint8_t channel;         // PWM channel ID
+    uint8_t duty_cycle;      // Duty cycle from 0 to 100
+} ps_set_msg_t;
+void on_ps_set(const msg_t *msg, void *user_ctx);
+
 #define HEATER_MSG_TYPE 0x11
 typedef struct {
     uint8_t enabled;        // 0 = off, 1 = on
@@ -20,6 +27,17 @@ typedef struct {
 } heater_config_msg_t;
 void on_heater_config(const msg_t *msg, void *user_ctx);
 
+#define SERVO_SET_ANGLE_MSG_TYPE 0x13
+typedef struct {
+    uint8_t angle;          // Angle from 0 to 180
+} servo_set_angle_msg_t;
+void on_servo_set_angle(const msg_t *msg, void *user_ctx);
+
+#define SERVO_DISABLE_MSG_TYPE 0x14
+typedef struct {
+} servo_disable_msg_t;
+void on_servo_disable(const msg_t *msg, void *user_ctx);
+
 #define GET_TC_TEMP_MSG_TYPE 0x15
 typedef struct {
     uint8_t tc_id;
@@ -33,6 +51,23 @@ typedef struct {
     // add flags for fault conditions (open circuit, short to GND, short to VCC) as bit fields
     uint8_t fault;  // 0 = no fault, 1 = fault detected
 } resp_tc_temp_msg_t;
+
+#define LED_STRIP_SET_SOLID_MSG_TYPE 0x20
+typedef struct {
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
+} led_strip_set_solid_msg_t;
+void on_led_strip_set_solid(const msg_t *msg, void *user_ctx);
+
+#define LED_STRIP_SET_SINGLE_MSG_TYPE 0x21
+typedef struct {
+    uint8_t index;
+    uint8_t red;
+    uint8_t green;
+    uint8_t blue;
+} led_strip_set_single_msg_t;
+void on_led_strip_set_single(const msg_t *msg, void *user_ctx);
 
 #define H_BRIDGE_MSG_TYPE 0x50
 typedef struct {

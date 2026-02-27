@@ -5,6 +5,9 @@
 #include "freertos/idf_additions.h"
 #include <string.h>
 
+#include "esp_log.h"
+
+const char* TAG = "msg_handlers";
 
 static const char *TAG = "MSG";
 
@@ -16,6 +19,28 @@ void on_ping(const msg_t *msg, void *user_ctx) {
     // Prepare pong response (no payload)
 
     xQueueSend(q_esp_now_tx, &response, pdMS_TO_TICKS(100));
+}
+
+void on_ps_set(const msg_t *msg, void *user_ctx) {
+    if(msg->length != sizeof(ps_set_msg_t)) {
+        // Invalid message length
+        return;
+    }
+
+    ps_set_msg_t *ps_msg = (ps_set_msg_t *)msg->payload;
+
+    // Set the PWM duty cycle for the specified channel
+    power_switch_t *ps = get_power_switch_by_id(ps_msg->channel);
+    if(ps == NULL) {
+        ESP_LOGW(TAG, "Invalid power switch channel: %d", ps_msg->channel);
+        return;
+    }
+    power_switch_set_duty(ps, ps_msg->duty_cycle);
+    if (ps_msg->duty_cycle > 0) {
+        power_switch_enable(ps, 1);
+    } else {
+        power_switch_enable(ps, 0);
+    }
 }
 
 void on_heater_enable(const msg_t *msg, void *user_ctx) {
@@ -42,6 +67,28 @@ void on_heater_config(const msg_t *msg, void *user_ctx) {
     stacjolab_controller.temp_control_config.heater_duty_cycle = config_msg->heater_duty_cycle;
 }
 
+void on_servo_set_angle(const msg_t *msg, void *user_ctx) {
+    if(msg->length != sizeof(servo_set_angle_msg_t)) {
+        // Invalid message length
+        return;
+    }
+
+    servo_set_angle_msg_t *servo_msg = (servo_set_angle_msg_t *)msg->payload;
+
+    iot_servo_write_angle(LEDC_LOW_SPEED_MODE, SERVO_0_CHANNEL, servo_msg->angle);
+}
+
+void on_servo_disable(const msg_t *msg, void *user_ctx) {
+    if(msg->length != sizeof(servo_disable_msg_t)) {
+        // Invalid message length
+        return;
+    }
+
+    ledc_set_duty(LEDC_LOW_SPEED_MODE, SERVO_0_CHANNEL, 0);
+    ledc_update_duty(LEDC_LOW_SPEED_MODE, SERVO_0_CHANNEL);
+    
+}
+
 void on_get_tc_temp(const msg_t *msg, void *user_ctx) {
     if(msg->length != sizeof(get_tc_temp_msg_t)) {
         // Invalid message length
@@ -65,6 +112,28 @@ void on_get_tc_temp(const msg_t *msg, void *user_ctx) {
     memcpy(response.payload, &resp_msg, sizeof(resp_tc_temp_msg_t));
 
     xQueueSend(q_esp_now_tx, &response, pdMS_TO_TICKS(100));
+}
+
+void on_led_strip_set_solid(const msg_t *msg, void *user_ctx) {
+    if(msg->length != sizeof(led_strip_set_solid_msg_t)) {
+        // Invalid message length
+        return;
+    }
+
+    led_strip_set_solid_msg_t *led_msg = (led_strip_set_solid_msg_t *)msg->payload;
+
+    led_strip_set_solid_color(&stacjolab_controller.led_strip, led_msg->red, led_msg->green, led_msg->blue);
+}
+
+void on_led_strip_set_single(const msg_t *msg, void *user_ctx) {
+    if(msg->length != sizeof(led_strip_set_single_msg_t)) {
+        // Invalid message length
+        return;
+    }
+
+    led_strip_set_single_msg_t *led_msg = (led_strip_set_single_msg_t *)msg->payload;
+
+    led_strip_set_single_led(&stacjolab_controller.led_strip, led_msg->index, led_msg->red, led_msg->green, led_msg->blue);
 }
 
 void on_h_bridge_set_speed(const msg_t *msg, void *user_ctx) {

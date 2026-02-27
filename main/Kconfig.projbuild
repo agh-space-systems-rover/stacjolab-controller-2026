@@ -1,0 +1,67 @@
+menu "Stacjolab Controller Configuration"
+
+    config STACJOLAB_MAX_HEATER_TEMP
+        int "Max heater temperature"
+        default 150
+        help
+            Maximum allowed temperature for the heater.
+
+    config STACJOLAB_HIGH_TEMP_THRESHOLD
+        int "High temperature threshold"
+        default 100
+        help
+            High temperature threshold for the heater.
+
+    config STACJOLAB_LOW_TEMP_THRESHOLD
+        int "Low temperature threshold"
+        default 80
+        help
+            Low temperature threshold for the heater.
+
+    config STACJOLAB_HEATER_DUTY_CYCLE
+        int "Heater duty cycle"
+        default 70
+        help
+            Heater duty cycle percentage.
+
+    config STACJOLAB_HEATING_ENABLED
+        bool "Heating enabled by default"
+        default y
+        help
+            Enable heating by default on startup.
+
+endmenu
+
+menu "Stacjolab LED indicator Configuration"
+
+    config STACJOLAB_LED_STRIP_LENGTH
+        int "LED strip length"
+        default 4
+        help
+            Number of LEDs in the strip.
+
+    config STACJOLAB_RED_ON_BOOT
+        int "LED red intensity on boot"
+        default 80
+        help
+            Brightness level for the LED indicator (0-255).
+    
+    config STACJOLAB_GREEN_ON_BOOT
+        int "LED green intensity on boot"
+        default 80
+        help
+            Brightness level for the LED indicator (0-255).
+
+    config STACJOLAB_BLUE_ON_BOOT
+        int "LED blue intensity on boot"
+        default 80
+        help
+            Brightness level for the LED indicator (0-255).
+
+    config STACJOLAB_LED_ENABLED_ON_BOOT
+        bool "LED indicator enabled by default"
+        default y
+        help
+            Enable LED indicator by default on startup.
+
+endmenu
