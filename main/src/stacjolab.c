@@ -55,6 +55,20 @@ esp_err_t stacjolab_controller_init(stacjolab_controller_t* controller) {
     led_strip_set_solid_color(&controller->led_strip, 0, 0, 0);
 #endif
     
+    servo_config_t servo_config = {
+        .max_angle = SERVO_0_MAX_ANGLE,
+        .min_width_us = SERVO_0_MIN_PULSE_WIDTH_US,
+        .max_width_us = SERVO_0_MAX_PULSE_WIDTH_US,
+        .channel_number = SERVO_COUNT,
+        .channels = {
+            .ch = {SERVO_0_CHANNEL},
+            .servo_pin = {SERVO_0_PIN}
+        },
+        .freq = LEDC_TIMER_1_FREQ,
+        .timer_number = LEDC_TIMER_1
+    };
+    ESP_ERROR_CHECK(iot_servo_init(LEDC_LOW_SPEED_MODE, &servo_config));
+    
     ESP_LOGI(TAG, "Controller initialized");
 
     return ESP_OK;

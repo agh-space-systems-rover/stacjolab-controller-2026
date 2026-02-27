@@ -27,6 +27,17 @@ typedef struct {
 } heater_config_msg_t;
 void on_heater_config(const msg_t *msg, void *user_ctx);
 
+#define SERVO_SET_ANGLE_MSG_TYPE 0x13
+typedef struct {
+    uint8_t angle;          // Angle from 0 to 180
+} servo_set_angle_msg_t;
+void on_servo_set_angle(const msg_t *msg, void *user_ctx);
+
+#define SERVO_DISABLE_MSG_TYPE 0x14
+typedef struct {
+} servo_disable_msg_t;
+void on_servo_disable(const msg_t *msg, void *user_ctx);
+
 #define GET_TC_TEMP_MSG_TYPE 0x15
 typedef struct {
     uint8_t tc_id;

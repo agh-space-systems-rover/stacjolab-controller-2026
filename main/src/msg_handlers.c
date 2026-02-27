@@ -64,6 +64,28 @@ void on_heater_config(const msg_t *msg, void *user_ctx) {
     stacjolab_controller.temp_control_config.heater_duty_cycle = config_msg->heater_duty_cycle;
 }
 
+void on_servo_set_angle(const msg_t *msg, void *user_ctx) {
+    if(msg->length != sizeof(servo_set_angle_msg_t)) {
+        // Invalid message length
+        return;
+    }
+
+    servo_set_angle_msg_t *servo_msg = (servo_set_angle_msg_t *)msg->payload;
+
+    iot_servo_write_angle(LEDC_LOW_SPEED_MODE, SERVO_0_CHANNEL, servo_msg->angle);
+}
+
+void on_servo_disable(const msg_t *msg, void *user_ctx) {
+    if(msg->length != sizeof(servo_disable_msg_t)) {
+        // Invalid message length
+        return;
+    }
+
+    ledc_set_duty(LEDC_LOW_SPEED_MODE, SERVO_0_CHANNEL, 0);
+    ledc_update_duty(LEDC_LOW_SPEED_MODE, SERVO_0_CHANNEL);
+    
+}
+
 void on_get_tc_temp(const msg_t *msg, void *user_ctx) {
     if(msg->length != sizeof(get_tc_temp_msg_t)) {
         // Invalid message length
