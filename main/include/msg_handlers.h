@@ -6,6 +6,13 @@ extern QueueHandle_t q_esp_now_tx;
 
 void on_ping(const msg_t *msg, void *user_ctx);
 
+#define PS_SET_MSG_TYPE 0x10
+typedef struct {
+    uint8_t channel;         // PWM channel ID
+    uint8_t duty_cycle;      // Duty cycle from 0 to 100
+} ps_set_msg_t;
+void on_ps_set(const msg_t *msg, void *user_ctx);
+
 #define HEATER_MSG_TYPE 0x11
 typedef struct {
     uint8_t enabled;        // 0 = off, 1 = on

@@ -4,6 +4,9 @@
 #include "freertos/idf_additions.h"
 #include <string.h>
 
+#include "esp_log.h"
+
+const char* TAG = "msg_handlers";
 
 void on_ping(const msg_t *msg, void *user_ctx) {
     msg_t response;
@@ -13,6 +16,28 @@ void on_ping(const msg_t *msg, void *user_ctx) {
     // Prepare pong response (no payload)
 
     xQueueSend(q_esp_now_tx, &response, pdMS_TO_TICKS(100));
+}
+
+void on_ps_set(const msg_t *msg, void *user_ctx) {
+    if(msg->length != sizeof(ps_set_msg_t)) {
+        // Invalid message length
+        return;
+    }
+
+    ps_set_msg_t *ps_msg = (ps_set_msg_t *)msg->payload;
+
+    // Set the PWM duty cycle for the specified channel
+    power_switch_t *ps = get_power_switch_by_id(ps_msg->channel);
+    if(ps == NULL) {
+        ESP_LOGW(TAG, "Invalid power switch channel: %d", ps_msg->channel);
+        return;
+    }
+    power_switch_set_duty(ps, ps_msg->duty_cycle);
+    if (ps_msg->duty_cycle > 0) {
+        power_switch_enable(ps, 1);
+    } else {
+        power_switch_enable(ps, 0);
+    }
 }
 
 void on_heater_enable(const msg_t *msg, void *user_ctx) {
