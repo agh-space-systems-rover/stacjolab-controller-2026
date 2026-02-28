@@ -29,7 +29,7 @@ void supervisor_task(void *arg) {
     dispatcher_register_handler(SERVO_SET_PULSE_WIDTH_MSG_TYPE, on_servo_set_pulse_width, NULL);
     
     dispatcher_register_handler(GET_TC_TEMP_MSG_TYPE, on_get_tc_temp, NULL);
-
+    dispatcher_register_handler(GET_TC_ALL_TEMP_MSG_TYPE, on_get_tc_all_temp, NULL);
 
     dispatcher_register_handler(LED_STRIP_SET_SOLID_MSG_TYPE, on_led_strip_set_solid, NULL);
     dispatcher_register_handler(LED_STRIP_SET_SINGLE_MSG_TYPE, on_led_strip_set_single, NULL);
