@@ -199,7 +199,7 @@ ExternalAnalog_StatusTypeDef ExternalAnalog_Driver_DataReadyCallback(ExternalAna
         // Result in uV.
         // Using int64 to prevent overflow.
         // Voltage = (ADC * VRef) / (Gain * 8388608)
-        int64_t v_ref_uv = pExternalAnalogDriver->VRef;make
+        int64_t v_ref_uv = pExternalAnalogDriver->VRef;
         
         // Raw voltage
         // Note: 8388608 is 2^23

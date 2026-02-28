@@ -52,6 +52,14 @@ typedef struct {
     // add flags for fault conditions (open circuit, short to GND, short to VCC) as bit fields
     uint8_t fault;  // 0 = no fault, 1 = fault detected
 } resp_tc_temp_msg_t;
+void on_resp_tc_temp(const msg_t *msg, void *user_ctx);
+
+
+#define GET_TC_ALL_TEMP_MSG_TYPE 0x17
+void on_get_tc_all_temp(const msg_t *msg, void *user_ctx);
+
+#define RESP_TC_ALL_TEMP_MSG_TYPE 0x18
+void on_resp_tc_all_temp(const msg_t *msg, void *user_ctx);
 
 #define LED_STRIP_SET_SOLID_MSG_TYPE 0x20
 typedef struct {
@@ -90,6 +98,8 @@ void on_weight_req(const msg_t *msg, void *user_ctx);
 typedef struct {
     int32_t weight;
 } weight_resp_msg_t;
+void on_weight_req(const msg_t *msg, void *user_ctx);
+
 
 #define WEIGHT_TARE_MSG_TYPE 0xD2
 void on_weight_tare(const msg_t *msg, void *user_ctx);
