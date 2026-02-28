@@ -20,13 +20,15 @@
  * Note: Higher data rates reduce conversion time but increase noise.
  * Conversion time approx = 1 / SPS.
  */
-#define TENSOMETER_DEFAULT_DATA_RATE DATA_RATE_175_SPS
+#define TENSOMETER_DEFAULT_DATA_RATE DATA_RATE_4
+
+5_SPS
 
 /**
  * @brief Number of samples for the moving average filter.
  * Larger size = smoother data but slower response.
  */
-#define TENSOMETER_MOVING_AVERAGE_SIZE 10
+#define TENSOMETER_MOVING_AVERAGE_SIZE 100
 
 /**
  * @brief Number of samples to discard/average during taring process.

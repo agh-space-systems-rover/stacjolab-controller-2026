@@ -186,6 +186,19 @@ void on_weight_req(const msg_t *msg, void *user_ctx) {
     xQueueSend(q_esp_now_tx, &response, pdMS_TO_TICKS(100));
 }
 
+
+// void on_weight_resp(const msg_t *msg, void *user_ctx) {
+//     (void)userresp_ctx;
+//     if(msg->length != sizeof(weight_resp_msg_t)) {
+//         return;
+//     }
+
+//     weight_resp_msg_t *weight_msg = (weight_resp_msg_t *)msg->payload;
+//     int32_t weight = weight_msg->weight;
+
+//     ESP_LOGI(TAG, "Received weight response: %d microvolts", weight);
+// }
+
 void on_weight_tare(const msg_t *msg, void *user_ctx) {
     (void)user_ctx;
     if(msg->length != 0) {

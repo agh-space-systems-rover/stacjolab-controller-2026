@@ -29,10 +29,13 @@ void supervisor_task(void *arg) {
     dispatcher_register_handler(CC_DRIVER_MSG_TYPE, on_cc_driver_set_duty, NULL);
 
     dispatcher_register_handler(PS_SET_MSG_TYPE, on_ps_set, NULL);
-
+    dispatcher_register_handler(RESP_TC_ALL_TEMP_MSG_TYPE, on_resp_tc_all_temp, NULL);
+    dispatcher_register_handler(RESP_TC_TEMP_MSG_TYPE, on_resp_tc_temp, NULL);
+    
     // Tensometer related handlers
     dispatcher_register_handler(WEIGHT_REQ_MSG_TYPE, on_weight_req, NULL);
     dispatcher_register_handler(WEIGHT_TARE_MSG_TYPE, on_weight_tare, NULL);
+    dispatcher_register_handler(WEIGHT_RESP_MSG_TYPE, on_weight_resp, NULL); // Reuse the same handler for simplicity
 
     while (1) {
         supervisor_status_report();

@@ -98,7 +98,7 @@ void on_weight_req(const msg_t *msg, void *user_ctx);
 typedef struct {
     int32_t weight;
 } weight_resp_msg_t;
-void on_weight_req(const msg_t *msg, void *user_ctx);
+void on_weight_resp(const msg_t *msg, void *user_ctx);
 
 
 #define WEIGHT_TARE_MSG_TYPE 0xD2
