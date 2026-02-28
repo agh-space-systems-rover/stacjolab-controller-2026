@@ -23,10 +23,10 @@
 #define TENSOMETER_DEFAULT_DATA_RATE DATA_RATE_175_SPS
 
 /**
- * @brief Number of samples for the moving average filter.
+ * @brief Minimum number of samples for the moving average filter.
  * Larger size = smoother data but slower response.
  */
-#define TENSOMETER_MOVING_AVERAGE_SIZE 100
+#define MINIMUM_TENSOMETER_MOVING_AVERAGE_SIZE 100
 
 /**
  * @brief Number of samples to discard/average during taring process.

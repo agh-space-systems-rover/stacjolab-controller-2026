@@ -198,18 +198,21 @@ void on_cc_driver_set_duty(const msg_t *msg, void *user_ctx) {
 
 void on_weight_req(const msg_t *msg, void *user_ctx) {
     (void)user_ctx;
-    if(msg->length != 0) {
+    if(msg->length != 1) {
         return;
     }
-
+    uint8_t number_of_samples = ((weight_req_msg_t *)msg->payload)->number_of_samples;
+    if(number_of_samples < MINIMUM_TENSOMETER_MOVING_AVERAGE_SIZE) {
+        number_of_samples = MINIMUM_TENSOMETER_MOVING_AVERAGE_SIZE;
+    }
     int64_t sum = 0;
-    for(uint8_t i = 0; i < TENSOMETER_MOVING_AVERAGE_SIZE; i++) {
+    for(uint8_t i = 0; i < number_of_samples; i++) {
         tensometer_read_all();
         sum += tensometer_get_voltage_sum();
         vTaskDelay(pdMS_TO_TICKS(100));
     }
 
-    int32_t voltage_uv = sum / TENSOMETER_MOVING_AVERAGE_SIZE;
+    int32_t voltage_uv = sum / number_of_samples;
     msg_t response;
     response.type = WEIGHT_RESP_MSG_TYPE; // 0xD1
     response.length = sizeof(weight_resp_msg_t); // 4 bytes

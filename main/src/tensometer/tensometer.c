@@ -120,7 +120,7 @@ void tensometer_tare(void) {
     }
     
     ExternalAnalog_Driver_Tare(&tenso1);
-    vTaskDelay(pdMS_TO_TICKS(100)); // Short delay to ensure second tare is not affected by first
+    vTaskDelay(pdMS_TO_TICKS(30)); // Short delay to ensure second tare is not affected by first
     ExternalAnalog_Driver_Tare(&tenso2);
     ESP_LOGI(TAG, "Tared both tensometers: offsets T1=%ld, T2=%ld", tenso1.VoltageOffset, tenso2.VoltageOffset);
 }
