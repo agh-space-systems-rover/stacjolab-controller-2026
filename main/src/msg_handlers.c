@@ -104,29 +104,50 @@ void on_servo_set_pulse_width(const msg_t *msg, void *user_ctx) {
 }
 
 void on_get_tc_temp(const msg_t *msg, void *user_ctx) {
-    if(msg->length != sizeof(get_tc_temp_msg_t)) {
-        // Invalid message length
+        if(msg->length != sizeof(get_tc_temp_msg_t)) {
+            // Invalid message length
+            return;
+        }
+
+        get_tc_temp_msg_t *get_temp_msg = (get_tc_temp_msg_t *)msg->payload;
+
+        uint8_t tc_id = get_temp_msg->tc_id;
+        float temp = get_temperature_by_id(tc_id);
+        bool fault = get_thermocouple_fault_by_id(tc_id);
+
+        resp_tc_temp_msg_t resp_msg;
+        resp_msg.tc_id = tc_id;
+        resp_msg.temp = (int16_t)(temp * 100); // Convert to fixed-point representation
+        resp_msg.fault = fault ? 1 : 0;
+
+        msg_t response;
+        response.type = RESP_TC_TEMP_MSG_TYPE;
+        response.length = sizeof(resp_tc_temp_msg_t);
+        memcpy(response.payload, &resp_msg, sizeof(resp_tc_temp_msg_t));
+
+        xQueueSend(q_esp_now_tx, &response, pdMS_TO_TICKS(100));
+}
+
+void on_get_tc_all_temp(const msg_t *msg, void *user_ctx) {
+    (void)user_ctx;
+    if(msg->length != 0) {
         return;
     }
 
-    get_tc_temp_msg_t *get_temp_msg = (get_tc_temp_msg_t *)msg->payload;
-
-    uint8_t tc_id = get_temp_msg->tc_id;
-    float temp = get_temperature_by_id(tc_id);
-    bool fault = get_thermocouple_fault_by_id(tc_id);
-
-    resp_tc_temp_msg_t resp_msg;
-    resp_msg.tc_id = tc_id;
-    resp_msg.temp = (int16_t)(temp * 100); // Convert to fixed-point representation
-    resp_msg.fault = fault ? 1 : 0;
-
     msg_t response;
-    response.type = RESP_TC_TEMP_MSG_TYPE;
-    response.length = sizeof(resp_tc_temp_msg_t);
-    memcpy(response.payload, &resp_msg, sizeof(resp_tc_temp_msg_t));
+    response.type = RESP_TC_ALL_TEMP_MSG_TYPE;
+    response.length = sizeof(resp_tc_temp_msg_t) * TC_COUNT;
+
+    for(uint8_t i = 0; i < TC_COUNT; i++) {
+        resp_tc_temp_msg_t *resp_msg = (resp_tc_temp_msg_t *)(response.payload + i * sizeof(resp_tc_temp_msg_t));
+        resp_msg->tc_id = i;
+        resp_msg->temp = (int16_t)(get_temperature_by_id(i) * 100); // Convert to fixed-point representation
+        resp_msg->fault = get_thermocouple_fault_by_id(i) ? 1 : 0;
+    }
 
     xQueueSend(q_esp_now_tx, &response, pdMS_TO_TICKS(100));
 }
+
 
 void on_led_strip_set_solid(const msg_t *msg, void *user_ctx) {
     if(msg->length != sizeof(led_strip_set_solid_msg_t)) {
