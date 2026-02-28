@@ -5,19 +5,16 @@
 
 static const char* TAG = "power_switch";
 
-static ledc_channel_t power_switch_pwm_channels[] = {LEDC_CHANNEL_5, LEDC_CHANNEL_6, LEDC_CHANNEL_7};
-static gpio_num_t power_switch_pwm_pins[] = {PS_PWM_1_PIN, PS_PWM_2_PIN, PS_PWM_3_PIN};
-
-esp_err_t power_switch_init(power_switch_t *power_switch, uint8_t id) {
+esp_err_t power_switch_init(power_switch_t *power_switch, uint8_t id, ledc_timer_t timer, ledc_channel_t channel, gpio_num_t gpio_num, uint16_t freq_hz, ledc_timer_bit_t duty_resolution) {
     power_switch->id = id;
     power_switch->enabled = 0;
 
     power_switch->pwm_driver.speed_mode = LEDC_LOW_SPEED_MODE;
-    power_switch->pwm_driver.timer = LEDC_TIMER_0;
-    power_switch->pwm_driver.channel = power_switch_pwm_channels[id];
-    power_switch->pwm_driver.gpio_num = power_switch_pwm_pins[id];
-    power_switch->pwm_driver.freq_hz = LEDC_TIMER_0_FREQ;
-    power_switch->pwm_driver.duty_resolution = LEDC_TIMER_0_RESOLUTION;
+    power_switch->pwm_driver.timer = timer;
+    power_switch->pwm_driver.channel = channel;
+    power_switch->pwm_driver.gpio_num = gpio_num;
+    power_switch->pwm_driver.freq_hz = freq_hz;
+    power_switch->pwm_driver.duty_resolution = duty_resolution;
 
     return pwm_driver_init(&power_switch->pwm_driver);
 }

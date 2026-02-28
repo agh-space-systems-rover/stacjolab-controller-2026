@@ -1,6 +1,5 @@
 #include "stacjolab.h"
 
-#include "sdkconfig.h"
 #include "esp_log.h"
 #include "esp_err.h"
 
@@ -23,52 +22,40 @@ esp_err_t stacjolab_controller_init(stacjolab_controller_t* controller) {
         };
     gpio_config(&io_conf);
 
-    // Initialize H-Bridge channels
-    ESP_ERROR_CHECK(h_bridge_init(&controller->h_bridge_ch_1, H_BRIDGE_1_ID));
-    ESP_ERROR_CHECK(h_bridge_init(&controller->h_bridge_ch_0, H_BRIDGE_0_ID));
+    // UNSED COMPONENTS FOR NOW
+    // // Initialize H-Bridge channels
+    // ESP_ERROR_CHECK(h_bridge_init(&controller->h_bridge_ch_1, H_BRIDGE_1_ID));
+    // ESP_ERROR_CHECK(h_bridge_init(&controller->h_bridge_ch_0, H_BRIDGE_0_ID));
 
-    // Initialize CC driver
-    ESP_ERROR_CHECK(cc_driver_init(&controller->cc_driver));
+    // // Initialize CC driver
+    // ESP_ERROR_CHECK(cc_driver_init(&controller->cc_driver));
 
     // Initialize power switches
-    ESP_ERROR_CHECK(power_switch_init(&controller->power_switch_ch_0, POWER_SWITCH_0_ID));
-    ESP_ERROR_CHECK(power_switch_init(&controller->power_switch_ch_1, POWER_SWITCH_1_ID));
-    ESP_ERROR_CHECK(power_switch_init(&controller->power_switch_ch_2, POWER_SWITCH_2_ID));
-
+    // Heater
+    ESP_ERROR_CHECK(power_switch_init(&controller->power_switch_ch_0, POWER_SWITCH_0_ID, LEDC_TIMER_1, LEDC_CHANNEL_0, PS_PWM_1_PIN, LEDC_TIMER_1_FREQ, LEDC_TIMER_1_RESOLUTION));
+    // Pump
+    ESP_ERROR_CHECK(power_switch_init(&controller->power_switch_ch_1, POWER_SWITCH_1_ID, LEDC_TIMER_2, LEDC_CHANNEL_1, PS_PWM_2_PIN, LEDC_TIMER_2_FREQ, LEDC_TIMER_2_RESOLUTION));
+    // UNUSED
+    ESP_ERROR_CHECK(power_switch_init(&controller->power_switch_ch_2, POWER_SWITCH_2_ID, LEDC_TIMER_1, LEDC_CHANNEL_2, PS_PWM_3_PIN, LEDC_TIMER_1_FREQ, LEDC_TIMER_1_RESOLUTION));
+    
     ESP_ERROR_CHECK(thermocouple_manager_init(&controller->thermocouple_manager));
 
     // Initialize temperature control config
-    controller->temp_control_config.high_temp_threshold = CONFIG_STACJOLAB_HIGH_TEMP_THRESHOLD;
-    controller->temp_control_config.low_temp_threshold = CONFIG_STACJOLAB_LOW_TEMP_THRESHOLD;
-    controller->temp_control_config.heater_duty_cycle = CONFIG_STACJOLAB_HEATER_DUTY_CYCLE;
-#ifdef CONFIG_STACJOLAB_HEATING_ENABLED
+    controller->temp_control_config.high_temp_threshold = STACJOLAB_HIGH_TEMP_THRESHOLD;
+    controller->temp_control_config.low_temp_threshold = STACJOLAB_LOW_TEMP_THRESHOLD;
+    controller->temp_control_config.heater_duty_cycle = STACJOLAB_HEATER_DUTY_CYCLE;
     controller->temp_control_config.heating_enabled = false;
-#else
-    controller->temp_control_config.heating_enabled = false;
-#endif
 
     ESP_ERROR_CHECK(led_strip_init(&controller->led_strip));
+    led_strip_set_solid_color(&controller->led_strip, STACJOLAB_RED_ON_BOOT, STACJOLAB_GREEN_ON_BOOT, STACJOLAB_BLUE_ON_BOOT);
+    ESP_LOGI(TAG, "LED strip initialized with color R:%d G:%d B:%d", STACJOLAB_RED_ON_BOOT, STACJOLAB_GREEN_ON_BOOT, STACJOLAB_BLUE_ON_BOOT);    
 
-#ifdef CONFIG_STACJOLAB_LED_ENABLED_ON_BOOT
-    led_strip_set_solid_color(&controller->led_strip, CONFIG_STACJOLAB_RED_ON_BOOT, CONFIG_STACJOLAB_GREEN_ON_BOOT, CONFIG_STACJOLAB_BLUE_ON_BOOT);
-#else
-    led_strip_set_solid_color(&controller->led_strip, 0, 0, 0);
-#endif
-    
-    servo_config_t servo_config = {
-        .max_angle = SERVO_0_MAX_ANGLE,
-        .min_width_us = SERVO_0_MIN_PULSE_WIDTH_US,
-        .max_width_us = SERVO_0_MAX_PULSE_WIDTH_US,
-        .channel_number = SERVO_COUNT,
-        .channels = {
-            .ch = {SERVO_0_CHANNEL},
-            .servo_pin = {SERVO_0_PIN}
-        },
-        .freq = LEDC_TIMER_1_FREQ,
-        .timer_number = LEDC_TIMER_1
-    };
-    // ESP_ERROR_CHECK(iot_servo_init(LEDC_LOW_SPEED_MODE, &servo_config));
-    
+    ESP_ERROR_CHECK(servo_init(&controller->servo, AUX_1_PIN, LEDC_TIMER_0, LEDC_CHANNEL_3, LEDC_TIMER_0_FREQ, LEDC_TIMER_0_RESOLUTION));
+    ESP_LOGI(TAG, "Servo initialized on channel %d", LEDC_CHANNEL_3);
+
+    tensometer_init(TENSO_SDA_PIN, TENSO_SCL_PIN);
+    ESP_LOGI(TAG, "Tensometer initialized");
+
     ESP_LOGI(TAG, "Controller initialized");
 
     return ESP_OK;

@@ -109,7 +109,7 @@ int32_t tensometer_get_voltage_2(void) {
 }
 
 int32_t tensometer_get_voltage_sum(void) {
-    return tensometer_get_voltage_1() + tensometer_get_voltage_2();
+    return tensometer_get_voltage_1() - tensometer_get_voltage_2(); // TODO: Verify the correct calculation
 }
 
 void tensometer_tare(void) {

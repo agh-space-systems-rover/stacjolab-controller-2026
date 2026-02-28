@@ -66,26 +66,41 @@ void on_heater_config(const msg_t *msg, void *user_ctx) {
     stacjolab_controller.temp_control_config.heater_duty_cycle = config_msg->heater_duty_cycle;
 }
 
-void on_servo_set_angle(const msg_t *msg, void *user_ctx) {
-    if(msg->length != sizeof(servo_set_angle_msg_t)) {
+void on_servo_set_percent(const msg_t *msg, void *user_ctx) {
+    if(msg->length != sizeof(servo_set_percent_msg_t)) {
         // Invalid message length
         return;
     }
 
-    servo_set_angle_msg_t *servo_msg = (servo_set_angle_msg_t *)msg->payload;
+    servo_set_percent_msg_t *servo_msg = (servo_set_percent_msg_t *)msg->payload;
 
-    iot_servo_write_angle(LEDC_LOW_SPEED_MODE, SERVO_0_CHANNEL, servo_msg->angle);
+    if(servo_msg->angle > 100) {
+        servo_disable(&stacjolab_controller.servo);
+    }
+    else {
+        servo_set_percent(&stacjolab_controller.servo, servo_msg->angle);
+    }
 }
 
+
 void on_servo_disable(const msg_t *msg, void *user_ctx) {
-    if(msg->length != sizeof(servo_disable_msg_t)) {
+    if(msg->length != 0) {
         // Invalid message length
         return;
     }
 
-    ledc_set_duty(LEDC_LOW_SPEED_MODE, SERVO_0_CHANNEL, 0);
-    ledc_update_duty(LEDC_LOW_SPEED_MODE, SERVO_0_CHANNEL);
-    
+    servo_disable(&stacjolab_controller.servo);
+}
+
+void on_servo_set_pulse_width(const msg_t *msg, void *user_ctx) {
+    if(msg->length != sizeof(servo_set_pulse_width_msg_t)) {
+        // Invalid message length
+        return;
+    }
+    servo_set_pulse_width_msg_t *servo_msg = (servo_set_pulse_width_msg_t *)msg->payload;
+    ESP_LOGI(TAG, "Received servo set pulse width message with length %d, pulse width: %d", msg->length, servo_msg->pulse_width_us);
+
+    servo_set_pulse_width(&stacjolab_controller.servo, servo_msg->pulse_width_us);
 }
 
 void on_get_tc_temp(const msg_t *msg, void *user_ctx) {
@@ -166,7 +181,7 @@ void on_weight_req(const msg_t *msg, void *user_ctx) {
         return;
     }
 
-    uint64_t sum = 0;
+    int64_t sum = 0;
     for(uint8_t i = 0; i < TENSOMETER_MOVING_AVERAGE_SIZE; i++) {
         tensometer_read_all();
         sum += tensometer_get_voltage_sum();
@@ -180,9 +195,7 @@ void on_weight_req(const msg_t *msg, void *user_ctx) {
     
     weight_resp_msg_t *resp_payload = (weight_resp_msg_t *)response.payload;
     resp_payload->weight = voltage_uv;
-    for(int i = 0; i < response.length; i++) {
-        ESP_LOGI(TAG, "Response payload byte %d: %02x", i, response.payload[i]);
-    }
+    ESP_LOGI(TAG, "Measured weight: %d", resp_payload->weight);
     xQueueSend(q_esp_now_tx, &response, pdMS_TO_TICKS(100));
 }
 

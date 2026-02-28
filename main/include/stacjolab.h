@@ -10,31 +10,41 @@
 #include "power_switch.h"
 #include "thermocouple.h"
 #include "ws28_driver.h"
+#include "servo.h"
+#include "tensometer.h"
 
-#include "iot_servo.h"
-
-#define LEDC_TIMER_0_FREQ 100
+// SERVO
+#define LEDC_TIMER_0_FREQ 50
 #define LEDC_TIMER_0_RESOLUTION LEDC_TIMER_14_BIT
 
-#define LEDC_TIMER_1_FREQ 50
+// HEATER
+#define LEDC_TIMER_1_FREQ 100
 #define LEDC_TIMER_1_RESOLUTION LEDC_TIMER_14_BIT
+
+// PUMP
+#define LEDC_TIMER_2_FREQ 2000
+#define LEDC_TIMER_2_RESOLUTION LEDC_TIMER_14_BIT
+
+// UNUSED
+#define LEDC_TIMER_3_FREQ 1000
+#define LEDC_TIMER_3_RESOLUTION LEDC_TIMER_14_BIT
 
 #define TC_HEATER TC_0_ID
 #define TC_INSIDE_OVEN TC_1_ID
 
 #define POWER_SWITCH_HEATER POWER_SWITCH_0_ID
 
-#define MAX_HEATER_TEMP CONFIG_STACJOLAB_MAX_HEATER_TEMP
+#define MAX_HEATER_TEMP 150
+#define STACJOLAB_HIGH_TEMP_THRESHOLD 100
+#define STACJOLAB_LOW_TEMP_THRESHOLD 97
+#define STACJOLAB_HEATER_DUTY_CYCLE 85
 
 #define TEMP_READ_TASK_INTERVAL_MS 500
 #define TEMP_CONTROL_TASK_INTERVAL_MS 1000
 
-#define SERVO_COUNT 1
-#define SERVO_0_CHANNEL LEDC_CHANNEL_0
-#define SERVO_0_PIN AUX_1_PIN
-#define SERVO_0_MAX_PULSE_WIDTH_US 2500
-#define SERVO_0_MIN_PULSE_WIDTH_US 500
-#define SERVO_0_MAX_ANGLE 180
+#define STACJOLAB_RED_ON_BOOT 255
+#define STACJOLAB_GREEN_ON_BOOT 0
+#define STACJOLAB_BLUE_ON_BOOT 255
 
 typedef struct {
 
@@ -63,7 +73,9 @@ typedef struct {
     temp_control_config_t temp_control_config;
 
     led_strip_t led_strip;
-    
+
+    servo_t servo;
+
 }stacjolab_controller_t;
 
 extern stacjolab_controller_t stacjolab_controller;

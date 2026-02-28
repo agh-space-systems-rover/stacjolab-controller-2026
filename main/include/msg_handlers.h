@@ -28,16 +28,17 @@ typedef struct {
 } heater_config_msg_t;
 void on_heater_config(const msg_t *msg, void *user_ctx);
 
-#define SERVO_SET_ANGLE_MSG_TYPE 0x13
+#define SERVO_SET_PERCENT_MSG_TYPE 0x13
 typedef struct {
-    uint8_t angle;          // Angle from 0 to 180
-} servo_set_angle_msg_t;
-void on_servo_set_angle(const msg_t *msg, void *user_ctx);
+    uint8_t angle;          // Angle from 0 to 100, > 100 disable servo
+} servo_set_percent_msg_t;
+void on_servo_set_percent(const msg_t *msg, void *user_ctx);
 
-#define SERVO_DISABLE_MSG_TYPE 0x14
+#define SERVO_SET_PULSE_WIDTH_MSG_TYPE 0x14
 typedef struct {
-} servo_disable_msg_t;
-void on_servo_disable(const msg_t *msg, void *user_ctx);
+    uint16_t pulse_width_us; // Pulse width in microseconds
+} servo_set_pulse_width_msg_t;
+void on_servo_set_pulse_width(const msg_t *msg, void *user_ctx);
 
 #define GET_TC_TEMP_MSG_TYPE 0x15
 typedef struct {

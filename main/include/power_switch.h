@@ -15,7 +15,7 @@ typedef struct {
     pwm_driver_t pwm_driver;
 } power_switch_t;
 
-esp_err_t power_switch_init(power_switch_t *power_switch, uint8_t id);
+esp_err_t power_switch_init(power_switch_t *power_switch, uint8_t id, ledc_timer_t timer, ledc_channel_t channel, gpio_num_t gpio_num, uint16_t freq_hz, ledc_timer_bit_t duty_resolution);
 power_switch_t* get_power_switch_by_id(uint8_t id);
 esp_err_t power_switch_set_duty(power_switch_t *power_switch, float duty);
 esp_err_t power_switch_enable(power_switch_t *power_switch, uint8_t enabled);
