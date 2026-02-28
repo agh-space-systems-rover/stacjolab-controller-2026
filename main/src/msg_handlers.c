@@ -1,12 +1,14 @@
 #include "msg_handlers.h"
 #include "stacjolab.h"
-
+#include "tensometer.h"
+#include "esp_log.h"
 #include "freertos/idf_additions.h"
 #include <string.h>
 
 #include "esp_log.h"
 
 const char* TAG = "msg_handlers";
+
 
 void on_ping(const msg_t *msg, void *user_ctx) {
     msg_t response;
@@ -156,4 +158,38 @@ void on_cc_driver_set_duty(const msg_t *msg, void *user_ctx) {
     cc_driver_msg_t *cc_msg = (cc_driver_msg_t *)msg->payload;
 
     cc_driver_duty(&stacjolab_controller.cc_driver, cc_msg->duty);
+}
+
+void on_weight_req(const msg_t *msg, void *user_ctx) {
+    (void)user_ctx;
+    if(msg->length != 0) {
+        return;
+    }
+
+    uint64_t sum = 0;
+    for(uint8_t i = 0; i < TENSOMETER_MOVING_AVERAGE_SIZE; i++) {
+        tensometer_read_all();
+        sum += tensometer_get_voltage_sum();
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
+
+    int32_t voltage_uv = sum / TENSOMETER_MOVING_AVERAGE_SIZE;
+    msg_t response;
+    response.type = WEIGHT_RESP_MSG_TYPE; // 0xD1
+    response.length = sizeof(weight_resp_msg_t); // 4 bytes
+    
+    weight_resp_msg_t *resp_payload = (weight_resp_msg_t *)response.payload;
+    resp_payload->weight = voltage_uv;
+    for(int i = 0; i < response.length; i++) {
+        ESP_LOGI(TAG, "Response payload byte %d: %02x", i, response.payload[i]);
+    }
+    xQueueSend(q_esp_now_tx, &response, pdMS_TO_TICKS(100));
+}
+
+void on_weight_tare(const msg_t *msg, void *user_ctx) {
+    (void)user_ctx;
+    if(msg->length != 0) {
+        return;
+    }
+    tensometer_tare();
 }
