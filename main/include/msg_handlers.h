@@ -17,6 +17,7 @@ void on_ps_set(const msg_t *msg, void *user_ctx);
 typedef struct {
     uint8_t enabled;        // 0 = off, 1 = on
 } heater_msg_t;
+
 void on_heater_enable(const msg_t *msg, void *user_ctx);
 
 #define HEATER_CONFIG_MSG_TYPE 0x12

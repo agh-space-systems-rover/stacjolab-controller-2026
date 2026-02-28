@@ -9,7 +9,6 @@
 
 const char* TAG = "msg_handlers";
 
-static const char *TAG = "MSG";
 
 void on_ping(const msg_t *msg, void *user_ctx) {
     msg_t response;

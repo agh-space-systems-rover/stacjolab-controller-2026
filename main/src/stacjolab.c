@@ -42,7 +42,7 @@ esp_err_t stacjolab_controller_init(stacjolab_controller_t* controller) {
     controller->temp_control_config.low_temp_threshold = CONFIG_STACJOLAB_LOW_TEMP_THRESHOLD;
     controller->temp_control_config.heater_duty_cycle = CONFIG_STACJOLAB_HEATER_DUTY_CYCLE;
 #ifdef CONFIG_STACJOLAB_HEATING_ENABLED
-    controller->temp_control_config.heating_enabled = true;
+    controller->temp_control_config.heating_enabled = false;
 #else
     controller->temp_control_config.heating_enabled = false;
 #endif
@@ -67,7 +67,7 @@ esp_err_t stacjolab_controller_init(stacjolab_controller_t* controller) {
         .freq = LEDC_TIMER_1_FREQ,
         .timer_number = LEDC_TIMER_1
     };
-    ESP_ERROR_CHECK(iot_servo_init(LEDC_LOW_SPEED_MODE, &servo_config));
+    // ESP_ERROR_CHECK(iot_servo_init(LEDC_LOW_SPEED_MODE, &servo_config));
     
     ESP_LOGI(TAG, "Controller initialized");
 

@@ -199,12 +199,11 @@ ExternalAnalog_StatusTypeDef ExternalAnalog_Driver_DataReadyCallback(ExternalAna
         // Result in uV.
         // Using int64 to prevent overflow.
         // Voltage = (ADC * VRef) / (Gain * 8388608)
-        int64_t v_ref_uv = pExternalAnalogDriver->VRef;
-        int64_t gain = pExternalAnalogDriver->Gain;
+        int64_t v_ref_uv = pExternalAnalogDriver->VRef;make
         
         // Raw voltage
         // Note: 8388608 is 2^23
-        int32_t raw_voltage = (int32_t)((((int64_t)pExternalAnalogDriver->ADCValueFiltered * v_ref_uv) / gain) / 8388608);
+        int32_t raw_voltage = (int32_t)((((int64_t)pExternalAnalogDriver->ADCValueFiltered * v_ref_uv)) / 8388608);
         pExternalAnalogDriver->Voltage = raw_voltage - pExternalAnalogDriver->VoltageOffset;
 
         pExternalAnalogDriver->IsDataValid = true;
@@ -214,7 +213,6 @@ ExternalAnalog_StatusTypeDef ExternalAnalog_Driver_DataReadyCallback(ExternalAna
             pExternalAnalogDriver->DataReadyCallback(pExternalAnalogDriver->Voltage);
         }
     }
-
     return EXTERNAL_ANALOG_DRIVER_OK;
 }
 
