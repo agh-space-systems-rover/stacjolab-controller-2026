@@ -53,6 +53,12 @@ typedef struct {
     uint8_t fault;  // 0 = no fault, 1 = fault detected
 } resp_tc_temp_msg_t;
 
+#define GET_TC_ALL_TEMP_MSG_TYPE 0x17
+void on_get_tc_all_temp(const msg_t *msg, void *user_ctx);
+
+#define RESP_TC_ALL_TEMP_MSG_TYPE 0x18
+
+
 #define LED_STRIP_SET_SOLID_MSG_TYPE 0x20
 typedef struct {
     uint8_t red;
