@@ -20,9 +20,7 @@
  * Note: Higher data rates reduce conversion time but increase noise.
  * Conversion time approx = 1 / SPS.
  */
-#define TENSOMETER_DEFAULT_DATA_RATE DATA_RATE_4
-
-5_SPS
+#define TENSOMETER_DEFAULT_DATA_RATE DATA_RATE_45_SPS
 
 /**
  * @brief Number of samples for the moving average filter.
