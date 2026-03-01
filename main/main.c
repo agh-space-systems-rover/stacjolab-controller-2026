@@ -87,7 +87,7 @@ esp_err_t create_tasks() {
     xTaskCreate(esp_now_task, "esp_now_task", 4096, NULL, 5, NULL);
     xTaskCreate(temp_control_task, "temp_control_task", 4096, NULL, 5, NULL);
     xTaskCreate(temp_read_task, "temp_read_task", 4096, NULL, 5, NULL);
-    // xTaskCreate(tensometer_task, "tensometer_task", 4096, NULL, 5, NULL); debug
+    xTaskCreate(tensometer_task, "tensometer_task", 4096, NULL, 5, NULL); // debug
 
     return ESP_OK;
 }

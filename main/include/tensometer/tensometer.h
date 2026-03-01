@@ -26,14 +26,10 @@
  * @brief Minimum number of samples for the moving average filter.
  * Larger size = smoother data but slower response.
  */
-#define MINIMUM_TENSOMETER_MOVING_AVERAGE_SIZE 100
+#define TENSOMETER_MOVING_AVERAGE_SIZE 100
 
-/**
- * @brief Number of samples to discard/average during taring process.
- * Ensures the filter is stable before setting the offset.
- */
-#define TENSOMETER_TARE_SAMPLES 50
 
+#define TENSOMETER_LOG_TIME 5000 // Log every 5 seconds in tensometer_task
 
 // =================================================================================================
 // Function Declarations

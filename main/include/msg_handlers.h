@@ -91,9 +91,6 @@ typedef struct {
 void on_cc_driver_set_duty(const msg_t *msg, void *user_ctx);
 
 #define WEIGHT_REQ_MSG_TYPE 0xD0
-typedef struct {
-    uint8_t number_of_samples; // Number of samples to average for weight measurement
-} weight_req_msg_t;
 void on_weight_req(const msg_t *msg, void *user_ctx);
 
 #define WEIGHT_RESP_MSG_TYPE 0xD1
