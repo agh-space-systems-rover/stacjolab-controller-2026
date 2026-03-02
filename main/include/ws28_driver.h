@@ -5,7 +5,7 @@
 
 #define RMT_RESOLUTION_HZ 10000000 // 10MHz, 0.1us per tick
 #define LED_STRIP_GPIO_NUM WS2812_PIN
-#define LED_STRIP_SIZE CONFIG_STACJOLAB_LED_STRIP_LENGTH
+#define LED_STRIP_SIZE 30
 
 typedef struct {
     rmt_encoder_handle_t encoder;

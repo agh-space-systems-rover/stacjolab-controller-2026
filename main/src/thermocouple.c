@@ -146,7 +146,7 @@ esp_err_t thermocouple_read(thermocouple_t* thermocouple) {
         thermocouple->flags.SCG = (*thermocouple->register_data >> TC_SCG_BIT) & 0x1;
         thermocouple->flags.SCV = (*thermocouple->register_data >> TC_SCV_BIT) & 0x1;
 
-        ESP_LOGW(TAG, "Thermocouple fault detected: OC=%d, SCG=%d, SCV=%d", thermocouple->flags.OC, thermocouple->flags.SCG, thermocouple->flags.SCV);
+        // ESP_LOGW(TAG, "Thermocouple fault detected: OC=%d, SCG=%d, SCV=%d", thermocouple->flags.OC, thermocouple->flags.SCG, thermocouple->flags.SCV);
 
         thermocouple->fault_detected = true;
 

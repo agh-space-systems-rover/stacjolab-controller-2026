@@ -21,6 +21,7 @@ esp_err_t stacjolab_controller_init(stacjolab_controller_t* controller) {
             .pull_up_en = 0
         };
     gpio_config(&io_conf);
+    gpio_set_level(LED1_PIN, 1);
 
     // UNSED COMPONENTS FOR NOW
     // // Initialize H-Bridge channels
@@ -44,6 +45,7 @@ esp_err_t stacjolab_controller_init(stacjolab_controller_t* controller) {
     controller->temp_control_config.high_temp_threshold = STACJOLAB_HIGH_TEMP_THRESHOLD;
     controller->temp_control_config.low_temp_threshold = STACJOLAB_LOW_TEMP_THRESHOLD;
     controller->temp_control_config.heater_duty_cycle = STACJOLAB_HEATER_DUTY_CYCLE;
+    controller->temp_control_config.lid_heater_duty_cycle = STACJOLAB_LID_HEATER_DUTY_CYCLE;
     controller->temp_control_config.heating_enabled = false;
 
     ESP_ERROR_CHECK(led_strip_init(&controller->led_strip));
@@ -56,6 +58,7 @@ esp_err_t stacjolab_controller_init(stacjolab_controller_t* controller) {
     tensometer_init(TENSO_SDA_PIN, TENSO_SCL_PIN);
     ESP_LOGI(TAG, "Tensometer initialized");
 
+    gpio_set_level(LED1_PIN, 0);
     ESP_LOGI(TAG, "Controller initialized");
 
     return ESP_OK;
@@ -65,9 +68,14 @@ void temp_read_task(void *arg) {
     while (1) {
         thermocouple_read_all(&stacjolab_controller.thermocouple_manager);
 
-        ESP_LOGI(TAG, "TC0: %.2f C, fault: %d", get_temperature_by_id(TC_0_ID), get_thermocouple_fault_by_id(TC_0_ID));
-        ESP_LOGI(TAG, "TC1: %.2f C, fault: %d", get_temperature_by_id(TC_1_ID), get_thermocouple_fault_by_id(TC_1_ID));
-        ESP_LOGI(TAG, "TC2: %.2f C, fault: %d", get_temperature_by_id(TC_2_ID), get_thermocouple_fault_by_id(TC_2_ID));
+        static TickType_t last_log = 0;
+        TickType_t now = xTaskGetTickCount();
+        if ((now - last_log) > pdMS_TO_TICKS(THERMOCOUPLE_LOG_TIME)) {
+            ESP_LOGI(TAG, "TC0: %.2f C, fault: %d", get_temperature_by_id(TC_0_ID), get_thermocouple_fault_by_id(TC_0_ID));
+            ESP_LOGI(TAG, "TC1: %.2f C, fault: %d", get_temperature_by_id(TC_1_ID), get_thermocouple_fault_by_id(TC_1_ID));
+            ESP_LOGI(TAG, "TC2: %.2f C, fault: %d", get_temperature_by_id(TC_2_ID), get_thermocouple_fault_by_id(TC_2_ID));
+            last_log = now;
+        }
 
         vTaskDelay(pdMS_TO_TICKS(TEMP_READ_TASK_INTERVAL_MS));
     }
@@ -81,42 +89,39 @@ void temp_control_task(void *arg) {
         gpio_set_level(LED2_PIN, stacjolab_controller.power_switch_ch_0.enabled);
         gpio_set_level(LED1_PIN, stacjolab_controller.temp_control_config.heating_enabled);
 
-        // thermocouple_read_all(&stacjolab_controller.thermocouple_manager);
-
-        // ESP_LOGI(TAG, "TC0: %.2f C, fault: %d", get_temperature_by_id(TC_0_ID), get_thermocouple_fault_by_id(TC_0_ID));
-        // ESP_LOGI(TAG, "TC1: %.2f C, fault: %d", get_temperature_by_id(TC_1_ID), get_thermocouple_fault_by_id(TC_1_ID));
-        // ESP_LOGI(TAG, "TC2: %.2f C, fault: %d", get_temperature_by_id(TC_2_ID), get_thermocouple_fault_by_id(TC_2_ID));
-
         ESP_LOGI(TAG, "Temp control config - High: %.2f C, Low: %.2f C, Duty: %.2f %%, Enabled: %d",
                 stacjolab_controller.temp_control_config.high_temp_threshold,
                 stacjolab_controller.temp_control_config.low_temp_threshold,
                 stacjolab_controller.temp_control_config.heater_duty_cycle,
                 stacjolab_controller.temp_control_config.heating_enabled);
 
-        if(get_thermocouple_fault_by_id(TC_HEATER) || get_thermocouple_fault_by_id(TC_INSIDE_OVEN)) {
-            ESP_LOGW(TAG, "Fault detected in one of the critical thermocouples. Disabling heating.");
-            power_switch_t* power_switch_heater = get_power_switch_by_id(POWER_SWITCH_HEATER);
-            power_switch_enable(power_switch_heater, 0);
-            continue; // Skip the rest of the control logic if there's a fault
-        }
 
         if (stacjolab_controller.temp_control_config.heating_enabled) {
+            
+            if(get_thermocouple_fault_by_id(TC_HEATER) || get_thermocouple_fault_by_id(TC_INSIDE_OVEN)) {
+                ESP_LOGW(TAG, "Fault detected in one of the critical thermocouples. Disabling heating.");
+                power_switch_t* power_switch_heater = get_power_switch_by_id(POWER_SWITCH_HEATER);
+                power_switch_enable(power_switch_heater, 0);
+                continue; // Skip the rest of the control logic if there's a fault
+            }
+
             float current_heater_temp = get_temperature_by_id(TC_HEATER);
             float current_oven_temp = get_temperature_by_id(TC_INSIDE_OVEN);
 
-
             power_switch_t* power_switch_heater = get_power_switch_by_id(POWER_SWITCH_HEATER);
+            power_switch_t* power_switch_lid_heater = get_power_switch_by_id(POWER_SWITCH_LID_HEATER);
 
             if (current_heater_temp >= MAX_HEATER_TEMP || current_oven_temp >= stacjolab_controller.temp_control_config.high_temp_threshold){
-                ESP_LOGI(TAG, "Temperature threshold exceeded. Disabling heater.");
                 power_switch_enable(power_switch_heater, 0);
-                ESP_LOGI(TAG, "Current heater temp: %.2f C, Current oven temp: %.2f C", current_heater_temp, current_oven_temp);
+                power_switch_enable(power_switch_lid_heater, 0);
+                ESP_LOGI(TAG, "Temperature threshold exceeded. Disabling heater. Current heater temp: %.2f C, Current oven temp: %.2f C", current_heater_temp, current_oven_temp);
             }
             else if (current_oven_temp <= stacjolab_controller.temp_control_config.low_temp_threshold) {
-                ESP_LOGI(TAG, "Temperature below threshold. Enabling heater.");
                 power_switch_set_duty(power_switch_heater, stacjolab_controller.temp_control_config.heater_duty_cycle);
+                power_switch_set_duty(power_switch_lid_heater, stacjolab_controller.temp_control_config.lid_heater_duty_cycle);
                 power_switch_enable(power_switch_heater, 1);
-                ESP_LOGI(TAG, "Heater duty cycle set to %.2f %%", stacjolab_controller.temp_control_config.heater_duty_cycle);
+                power_switch_enable(power_switch_lid_heater, 1);
+                ESP_LOGI(TAG, "Temperature below threshold. Enabling heater. Heater duty cycle set to %.2f %%, Lid heater duty cycle set to %.2f %%", stacjolab_controller.temp_control_config.heater_duty_cycle, stacjolab_controller.temp_control_config.lid_heater_duty_cycle);
             }
             
         }

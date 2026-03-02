@@ -119,14 +119,14 @@ esp_err_t tensometer_init(int sda_pin, int scl_pin) {
     // Set moving average size
     ExternalAnalog_Driver_SetMovingAverageSize(TENSOMETER_MOVING_AVERAGE_SIZE);
 
-    // Perform initial tare
-    for(int i = 0; i < TENSOMETER_MOVING_AVERAGE_SIZE; i++) {
-        tensometer_read_all();
+    // // Perform initial tare
+    // for(int i = 0; i < TENSOMETER_MOVING_AVERAGE_SIZE; i++) {
+    //     tensometer_read_all();
 
-        vTaskDelay(pdMS_TO_TICKS(100));
-    }
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
     
-    tensometer_tare();
+    // tensometer_tare();
     
     ESP_LOGI(TAG, "Tensometers initialized successfully");
     return ESP_OK;
