@@ -53,6 +53,8 @@
 #define STACJOLAB_GREEN_ON_BOOT 80
 #define STACJOLAB_BLUE_ON_BOOT 0
 
+#define DHT11_GPIO AUX_2_PIN
+
 typedef struct {
 
     float high_temp_threshold;
@@ -83,6 +85,8 @@ typedef struct {
     led_strip_t led_strip;
 
     servo_t servo;
+
+    rmt_channel_handle_t dht11_chan;
 
 }stacjolab_controller_t;
 

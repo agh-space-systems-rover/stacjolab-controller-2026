@@ -25,6 +25,7 @@ typedef struct {
     uint8_t high_temp_threshold;
     uint8_t low_temp_threshold;
     uint8_t heater_duty_cycle;
+    uint8_t lid_heater_duty_cycle;
 } heater_config_msg_t;
 void on_heater_config(const msg_t *msg, void *user_ctx);
 

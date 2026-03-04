@@ -64,6 +64,7 @@ void on_heater_config(const msg_t *msg, void *user_ctx) {
     stacjolab_controller.temp_control_config.high_temp_threshold = config_msg->high_temp_threshold;
     stacjolab_controller.temp_control_config.low_temp_threshold = config_msg->low_temp_threshold;
     stacjolab_controller.temp_control_config.heater_duty_cycle = config_msg->heater_duty_cycle;
+    stacjolab_controller.temp_control_config.lid_heater_duty_cycle = config_msg->lid_heater_duty_cycle;
 }
 
 void on_servo_set_percent(const msg_t *msg, void *user_ctx) {

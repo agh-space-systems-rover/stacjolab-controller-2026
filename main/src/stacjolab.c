@@ -127,7 +127,10 @@ void temp_control_task(void *arg) {
         }
         else {
             power_switch_t* power_switch_heater = get_power_switch_by_id(POWER_SWITCH_HEATER);
+            power_switch_t* power_switch_lid_heater = get_power_switch_by_id(POWER_SWITCH_LID_HEATER);
             power_switch_enable(power_switch_heater, 0);
+            power_switch_enable(power_switch_lid_heater, 0);
+
         }
 
         vTaskDelay(pdMS_TO_TICKS(TEMP_CONTROL_TASK_INTERVAL_MS));
