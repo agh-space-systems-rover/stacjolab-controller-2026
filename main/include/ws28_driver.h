@@ -1,11 +1,13 @@
+#pragma once
 
 #include "led_strip_encoder.h"
 #include "driver/rmt_tx.h"
+
 #include "pin_def.h"
+#include "config.h"
 
 #define RMT_RESOLUTION_HZ 10000000 // 10MHz, 0.1us per tick
 #define LED_STRIP_GPIO_NUM WS2812_PIN
-#define LED_STRIP_SIZE 30
 
 typedef struct {
     rmt_encoder_handle_t encoder;

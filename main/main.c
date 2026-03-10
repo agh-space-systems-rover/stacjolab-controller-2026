@@ -29,8 +29,6 @@ stacjolab_controller_t stacjolab_controller;
 void app_main(void) {
     ESP_LOGI(TAG, "Initializing stacjolab controller");
 
-    
-
     ESP_ERROR_CHECK(init());
     ESP_ERROR_CHECK(stacjolab_controller_init(&stacjolab_controller));
     ESP_ERROR_CHECK(create_queues());
@@ -58,8 +56,7 @@ esp_err_t wifi_init(uint8_t channel) {
     ESP_ERROR_CHECK(esp_wifi_init(&cfg));
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
     ESP_ERROR_CHECK(esp_wifi_start());
-
-    //TODO: Add specific WiFi channel setup
+    ESP_ERROR_CHECK(esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE));
     return ESP_OK;
 }
 
@@ -70,7 +67,7 @@ esp_err_t init() {
     nvs_init();
 
     // Initialize WiFi
-    wifi_init(1); //TODO: set proper channel
+    wifi_init(WIFI_CHANNEL);
 
     //print MAC address
     uint8_t mac[6];
@@ -87,7 +84,7 @@ esp_err_t create_tasks() {
     xTaskCreate(esp_now_task, "esp_now_task", 4096, NULL, 5, NULL);
     xTaskCreate(temp_control_task, "temp_control_task", 4096, NULL, 5, NULL);
     xTaskCreate(temp_read_task, "temp_read_task", 4096, NULL, 5, NULL);
-    xTaskCreate(tensometer_task, "tensometer_task", 4096, NULL, 5, NULL); // debug
+    // xTaskCreate(tensometer_task, "tensometer_task", 4096, NULL, 5, NULL); // debug
 
     return ESP_OK;
 }

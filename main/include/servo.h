@@ -1,9 +1,7 @@
 #pragma once
 #include "pwm_driver.h"
 
-#define SERVO_0_MAX_ANGLE 100
-#define SERVO_0_MAX_PULSE_WIDTH_US 2100
-#define SERVO_0_MIN_PULSE_WIDTH_US 900
+#include "config.h"
 
 typedef struct {
     pwm_driver_t pwm;

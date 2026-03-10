@@ -4,6 +4,7 @@
 #include "esp_err.h"
 
 #include "pin_def.h"
+#include "config.h"
 
 #include "h_bridge.h"
 #include "cc_driver.h"
@@ -40,18 +41,8 @@
 #define POWER_SWITCH_PUMP POWER_SWITCH_1_ID
 #define POWER_SWITCH_LID_HEATER POWER_SWITCH_2_ID
 
-#define MAX_HEATER_TEMP 150
-#define STACJOLAB_HIGH_TEMP_THRESHOLD 100
-#define STACJOLAB_LOW_TEMP_THRESHOLD 97
-#define STACJOLAB_HEATER_DUTY_CYCLE 85
-#define STACJOLAB_LID_HEATER_DUTY_CYCLE 50
-
 #define TEMP_READ_TASK_INTERVAL_MS 500
 #define TEMP_CONTROL_TASK_INTERVAL_MS 1000
-
-#define STACJOLAB_RED_ON_BOOT 255
-#define STACJOLAB_GREEN_ON_BOOT 80
-#define STACJOLAB_BLUE_ON_BOOT 0
 
 #define DHT11_GPIO AUX_2_PIN
 
